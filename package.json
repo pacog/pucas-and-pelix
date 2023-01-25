@@ -18,8 +18,7 @@
         "@tensorflow/tfjs-core": "^4.2.0",
         "dat.gui": "^0.7.9",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "scatter-gl": "^0.0.13"
+        "react-dom": "^18.2.0"
     },
     "devDependencies": {
         "@types/dat.gui": "^0.7.7",
