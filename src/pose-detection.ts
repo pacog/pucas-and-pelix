@@ -1,3 +1,27 @@
+import { SupportedModels, movenet } from "@tensorflow-models/pose-detection";
+import "@tensorflow/tfjs-backend-webgl";
+import "@tensorflow/tfjs-backend-webgpu";
+import * as tfjsWasm from "@tensorflow/tfjs-backend-wasm";
+import * as posedetection from "@tensorflow-models/pose-detection";
+
+export const MODEL = SupportedModels.MoveNet;
+export const MODEL_TYPE = movenet.modelType.SINGLEPOSE_LIGHTNING;
+
+tfjsWasm.setWasmPaths(
+    `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${tfjsWasm.version_wasm}/dist/`
+);
+
+export async function getDetector() {
+    const detector = await posedetection.createDetector(MODEL, {
+        modelType: MODEL_TYPE,
+    });
+    if (!detector) {
+        throw new Error("Error creating pose detector");
+    }
+    setBackendAndEnvFlags();
+    return detector;
+}
+
 import * as tf from "@tensorflow/tfjs-core";
 import { BACKEND } from "./constants";
 
@@ -30,23 +54,7 @@ async function resetBackend(backendName: string) {
     await tf.setBackend(backendName);
 }
 
-/**
- * Set environment flags.
- *
- * This is a wrapper function of `tf.env().setFlags()` to constrain users to
- * only set tunable flags (the keys of `TUNABLE_FLAG_TYPE_MAP`).
- *
- * ```js
- * const flagConfig = {
- *        WEBGL_PACK: false,
- *      };
- * await setEnvFlags(flagConfig);
- *
- * console.log(tf.env().getBool('WEBGL_PACK')); // false
- * console.log(tf.env().getBool('WEBGL_PACK_BINARY_OPERATIONS')); // false
- * ```
- */
-export async function setBackendAndEnvFlags() {
+async function setBackendAndEnvFlags() {
     const flagConfig = {
         WEBGL_CPU_FORWARD: true,
         WEBGL_FLUSH_THRESHOLD: -1,
