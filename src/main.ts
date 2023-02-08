@@ -20,7 +20,6 @@ let gameWorld: GameWorld;
 async function gameLoop() {
     currentPoses = await detector.estimatePoses(videoInput, {
         maxPoses: MAX_POSES,
-        flipHorizontal: false,
     });
     for (const i of range(0, MAX_POSES)) {
         gameWorld.players[i].updateWithPose(currentPoses[i]);
