@@ -1,3 +1,4 @@
+import { Line, Point } from "@mathigon/euclid";
 import { Keypoint } from "@tensorflow-models/pose-detection";
 import { Application, Graphics } from "pixi.js";
 import { GameWorld } from "./game-world";
@@ -63,8 +64,13 @@ export class GameOutput {
         const pointsToPaint = [
             "left_eye",
             "right_eye",
+            "nose",
             "left_shoulder",
             "right_shoulder",
+            "middle_eyes",
+            "mouth_center",
+            "mouth_right",
+            "mouth_left",
         ];
         const linesToPaint = [
             ["left_shoulder", "right_shoulder"],
@@ -80,8 +86,10 @@ export class GameOutput {
             }
         }
 
+        const augmentedKeypoints = augmentKeypoints(keypointsMap);
+
         pointsToPaint.forEach((pointName) => {
-            const keypoint = keypointsMap.get(pointName);
+            const keypoint = augmentedKeypoints.get(pointName);
             if (!keypoint) {
                 return;
             }
@@ -92,7 +100,7 @@ export class GameOutput {
 
         linesToPaint.forEach((line) => {
             const keypoints = line.map((pointName) =>
-                keypointsMap.get(pointName)
+                augmentedKeypoints.get(pointName)
             );
             if (keypoints.some((keypoint) => !keypoint)) {
                 return;
@@ -110,6 +118,56 @@ export class GameOutput {
             });
         });
     }
+}
+
+function augmentKeypoints(keypoints: Map<string, Keypoint>) {
+    const result = new Map(keypoints);
+
+    const nose = result.get("nose");
+    const rightEye = result.get("right_eye");
+    const leftEye = result.get("left_eye");
+
+    if (nose && rightEye && leftEye) {
+        const score = Math.min(
+            rightEye.score || 0,
+            leftEye.score || 0,
+            nose.score || 0
+        );
+        const lineEyes = new Line(
+            new Point(rightEye.x, rightEye.y),
+            new Point(leftEye.x, leftEye.y)
+        );
+        result.set("middle_eyes", {
+            name: "middle_eyes",
+            x: lineEyes.midpoint.x,
+            y: lineEyes.midpoint.y,
+            score,
+        });
+        const nosePoint = new Point(nose.x, nose.y);
+        const noseLine = lineEyes.parallel(nosePoint);
+        const mouthPoint = lineEyes.midpoint.reflect(noseLine);
+        result.set("mouth_center", {
+            name: "mouth_center",
+            x: mouthPoint.x,
+            y: mouthPoint.y,
+            score,
+        });
+        const mouthLine = lineEyes.rotate(Math.PI, nosePoint);
+        result.set("mouth_right", {
+            name: "mouth_right",
+            x: mouthLine.at(0.25).x,
+            y: mouthLine.at(0.25).y,
+            score,
+        });
+        result.set("mouth_left", {
+            name: "mouth_left",
+            x: mouthLine.at(0.75).x,
+            y: mouthLine.at(0.75).y,
+            score,
+        });
+    }
+
+    return result;
 }
 
 // ("nose");

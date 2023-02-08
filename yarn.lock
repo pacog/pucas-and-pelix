@@ -393,6 +393,26 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@mathigon/core@1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@mathigon/core/-/core-1.1.5.tgz#a8a6229d5804cb0dcca5e266075e8bcedcc5745f"
+  integrity sha512-17jHfRvkJrwfXkO36NBJNv0hg2ywOHCpdW59P38iA5pjXfSp5ez43iWXnXS8eWN3ssYtKRiKvazL/b5kfMDF7Q==
+
+"@mathigon/euclid@^1.1.8":
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/@mathigon/euclid/-/euclid-1.1.8.tgz#406ff6fb581ff8ff2afaf3919dbb3c4681c1f15c"
+  integrity sha512-1cY8zfp+oHaDVnb3yxFW07LR5c0mT30+DSG6HYTH4W9mGiIInxp/YgFuaBbFnEcV3n3MSutSRNZ0ftzn+s7eqg==
+  dependencies:
+    "@mathigon/core" "1.1.5"
+    "@mathigon/fermat" "1.1.5"
+
+"@mathigon/fermat@1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@mathigon/fermat/-/fermat-1.1.5.tgz#2dbb3b580c73e3f403813d396b555aef324285e4"
+  integrity sha512-9HpdhhQ1zaPV5XRVMZvSzFU2RI/usD8MEZsDo3XR17ZtXuL+qGPww1/sRlePp0VNVQUACE4XcM+ST1rQJT2bDQ==
+  dependencies:
+    "@mathigon/core" "1.1.5"
+
 "@mediapipe/pose@^0.5.1635988162":
   version "0.5.1635988162"
   resolved "https://registry.yarnpkg.com/@mediapipe/pose/-/pose-0.5.1635988162.tgz#905e626cb07bce86c692d8ec057f04558ddd26fe"

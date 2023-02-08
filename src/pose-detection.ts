@@ -1,8 +1,11 @@
-import { SupportedModels, movenet } from "@tensorflow-models/pose-detection";
+import {
+    SupportedModels,
+    movenet,
+    createDetector,
+} from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl";
 import "@tensorflow/tfjs-backend-webgpu";
 import * as tfjsWasm from "@tensorflow/tfjs-backend-wasm";
-import * as posedetection from "@tensorflow-models/pose-detection";
 
 export const MODEL = SupportedModels.MoveNet;
 export const MODEL_TYPE = movenet.modelType.SINGLEPOSE_LIGHTNING;
@@ -12,7 +15,7 @@ tfjsWasm.setWasmPaths(
 );
 
 export async function getDetector() {
-    const detector = await posedetection.createDetector(MODEL, {
+    const detector = await createDetector(MODEL, {
         modelType: MODEL_TYPE,
     });
     if (!detector) {
