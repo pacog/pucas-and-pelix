@@ -10,7 +10,7 @@ export async function getVideoInput() {
     }
     const { width, height } = videoElement.getBoundingClientRect();
 
-    const videoConfig = {
+    const stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
             facingMode: "user",
@@ -20,10 +20,7 @@ export async function getVideoInput() {
                 ideal: 60,
             },
         },
-    };
-
-    const stream = await navigator.mediaDevices.getUserMedia(videoConfig);
-
+    });
     videoElement.srcObject = stream;
 
     await new Promise((resolve) => {
@@ -33,5 +30,9 @@ export async function getVideoInput() {
     });
     videoElement.play();
 
-    return videoElement;
+    return {
+        videoElement,
+        containerSize: { width, height },
+        contentSize: videoElement.srcObject.getTracks()[0].getSettings(),
+    };
 }
