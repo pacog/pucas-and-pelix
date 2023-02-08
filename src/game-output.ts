@@ -51,7 +51,12 @@ export class GameOutput {
     }
 
     paintPlayer(player: PucasPelixPlayer) {
-        const MIN_ACCURACY = 0.4;
+        const MIN_ACCURACY = 0.2;
+        const COLOR_POINTS = 0xffffff;
+        const SIZE_POINTS = 10;
+        const COLOR_LINES = 0xffffff;
+        const SIZE_LINES = 10;
+
         if (!player.pose) {
             return;
         }
@@ -59,24 +64,41 @@ export class GameOutput {
             (keypoint) => (keypoint.score || 0) > MIN_ACCURACY
         );
 
-        // TODO: object that creates new keypoints from old ones
-
         const pointsToPaint = [
             "left_eye",
             "right_eye",
-            "nose",
-            "left_shoulder",
-            "right_shoulder",
-            "middle_eyes",
-            "mouth_center",
-            "mouth_right",
-            "mouth_left",
+            // "nose",
+            // "left_shoulder",
+            // "right_shoulder",
+            // "middle_eyes",
+            // "mouth_center",
+            // "mouth_right",
+            // "mouth_left",
+            // "top_head",
+            // "right_head",
+            // "left_head",
+            // "chin",
         ];
         const linesToPaint = [
             ["left_shoulder", "right_shoulder"],
+            [
+                "left_shoulder",
+                "left_head",
+                "top_head",
+                "right_head",
+                "right_shoulder",
+            ],
+            ["mouth_right", "mouth_left"],
             ["left_shoulder", "right_shoulder"],
             ["left_shoulder", "left_elbow", "left_wrist"],
             ["right_shoulder", "right_elbow", "right_wrist"],
+            ["left_shoulder", "left_hip"],
+            ["right_shoulder", "right_hip"],
+            ["left_hip", "right_hip"],
+            ["left_hip", "left_knee"],
+            ["left_ankle", "left_knee"],
+            ["right_hip", "right_knee"],
+            ["right_ankle", "right_knee"],
         ];
 
         const keypointsMap = new Map<string, Keypoint>();
@@ -93,8 +115,11 @@ export class GameOutput {
             if (!keypoint) {
                 return;
             }
-            this.playerGraphics.beginFill(0xde3249, 1);
-            this.playerGraphics.drawCircle(...this.project(keypoint), 10);
+            this.playerGraphics.beginFill(COLOR_POINTS, 1);
+            this.playerGraphics.drawCircle(
+                ...this.project(keypoint),
+                SIZE_POINTS
+            );
             this.playerGraphics.endFill();
         });
 
@@ -105,7 +130,7 @@ export class GameOutput {
             if (keypoints.some((keypoint) => !keypoint)) {
                 return;
             }
-            this.playerGraphics.lineStyle(2, 0xffffff, 1);
+            this.playerGraphics.lineStyle(SIZE_LINES, COLOR_LINES);
             keypoints.forEach((keypoint, index) => {
                 if (!keypoint) {
                     return;
@@ -163,6 +188,49 @@ function augmentKeypoints(keypoints: Map<string, Keypoint>) {
             name: "mouth_left",
             x: mouthLine.at(0.75).x,
             y: mouthLine.at(0.75).y,
+            score,
+        });
+    }
+
+    const middleEyes = result.get("middle_eyes");
+
+    if (nose && middleEyes) {
+        const score = Math.min(middleEyes.score || 0, nose.score || 0);
+
+        const noseLine = new Line(
+            new Point(middleEyes.x, middleEyes.y),
+            new Point(nose.x, nose.y)
+        );
+        result.set("top_head", {
+            name: "top_head",
+            x: noseLine.at(-4).x,
+            y: noseLine.at(-4).y,
+            score,
+        });
+        result.set("chin", {
+            name: "chin",
+            x: noseLine.at(4).x,
+            y: noseLine.at(4).y,
+            score,
+        });
+    }
+
+    if (rightEye && leftEye) {
+        const score = Math.min(rightEye.score || 0, leftEye.score || 0);
+        const lineEyes = new Line(
+            new Point(rightEye.x, rightEye.y),
+            new Point(leftEye.x, leftEye.y)
+        );
+        result.set("right_head", {
+            name: "right_head",
+            x: lineEyes.at(-1).x,
+            y: lineEyes.at(-1).y,
+            score,
+        });
+        result.set("left_head", {
+            name: "left_head",
+            x: lineEyes.at(2).x,
+            y: lineEyes.at(2).y,
             score,
         });
     }
