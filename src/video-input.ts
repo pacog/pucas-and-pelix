@@ -9,6 +9,8 @@ export async function getVideoInput() {
         throw new Error("Video element not found");
     }
     const { width, height } = videoElement.getBoundingClientRect();
+    videoElement.setAttribute("width", `${width}px`);
+    videoElement.setAttribute("height", `${height}px`);
 
     const stream = await navigator.mediaDevices.getUserMedia({
         audio: false,

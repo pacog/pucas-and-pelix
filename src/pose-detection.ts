@@ -7,17 +7,34 @@ import "@tensorflow/tfjs-backend-webgl";
 import "@tensorflow/tfjs-backend-webgpu";
 import * as tfjsWasm from "@tensorflow/tfjs-backend-wasm";
 
-export const MODEL = SupportedModels.MoveNet;
-export const MODEL_TYPE = movenet.modelType.SINGLEPOSE_LIGHTNING;
+export enum SUPPORTED_DETECTORS {
+    PoseNet,
+    MoveNet,
+}
 
 tfjsWasm.setWasmPaths(
     `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${tfjsWasm.version_wasm}/dist/`
 );
 
-export async function getDetector() {
-    const detector = await createDetector(MODEL, {
-        modelType: MODEL_TYPE,
-    });
+export async function getDetector(
+    type: SUPPORTED_DETECTORS = SUPPORTED_DETECTORS.PoseNet
+) {
+    let detector;
+    if (type === SUPPORTED_DETECTORS.MoveNet) {
+        detector = await createDetector(SupportedModels.MoveNet, {
+            modelType: movenet.modelType.SINGLEPOSE_LIGHTNING,
+        });
+    }
+    if (type === SUPPORTED_DETECTORS.PoseNet) {
+        detector = await createDetector(SupportedModels.PoseNet, {
+            quantBytes: 4,
+            architecture: "MobileNetV1",
+            outputStride: 16,
+            inputResolution: null,
+            multiplier: 0.75,
+        });
+    }
+
     if (!detector) {
         throw new Error("Error creating pose detector");
     }

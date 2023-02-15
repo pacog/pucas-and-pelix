@@ -51,7 +51,6 @@ export class GameOutput {
     }
 
     paintPlayer(player: PucasPelixPlayer) {
-        const MIN_ACCURACY = 0.2;
         const COLOR_POINTS = 0xffffff;
         const SIZE_POINTS = 10;
         const COLOR_LINES = 0xffffff;
@@ -60,9 +59,7 @@ export class GameOutput {
         if (!player.pose) {
             return;
         }
-        const usefulBaseKeypoints = player.pose.keypoints.filter(
-            (keypoint) => (keypoint.score || 0) > MIN_ACCURACY
-        );
+        const usefulBaseKeypoints = player.pose.keypoints;
 
         const pointsToPaint = [
             "left_eye",
