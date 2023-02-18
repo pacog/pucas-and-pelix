@@ -22,7 +22,7 @@ export async function getDetector(
     let detector;
     if (type === SUPPORTED_DETECTORS.MoveNet) {
         detector = await createDetector(SupportedModels.MoveNet, {
-            modelType: movenet.modelType.SINGLEPOSE_LIGHTNING,
+            modelType: movenet.modelType.MULTIPOSE_LIGHTNING,
         });
     }
     if (type === SUPPORTED_DETECTORS.PoseNet) {

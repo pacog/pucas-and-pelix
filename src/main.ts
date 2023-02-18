@@ -20,7 +20,7 @@ let gameWorld: GameWorld;
  */
 async function gameLoop() {
     const minAccuracy =
-        detectorType === SUPPORTED_DETECTORS.MoveNet ? 0.4 : 0.2;
+        detectorType === SUPPORTED_DETECTORS.MoveNet ? 0.2 : 0.2;
     currentPoses = await detector.estimatePoses(videoInput, {
         maxPoses: MAX_POSES,
     });
@@ -70,10 +70,10 @@ async function init() {
 function updateUI() {
     switch (detectorType) {
         case SUPPORTED_DETECTORS.MoveNet:
-            updateTogglePoseDetectionType("Single - MoveNet");
+            updateTogglePoseDetectionType("New - MoveNet");
             break;
         case SUPPORTED_DETECTORS.PoseNet:
-            updateTogglePoseDetectionType("Many - PoseNet");
+            updateTogglePoseDetectionType("Old - PoseNet");
             break;
     }
 }
