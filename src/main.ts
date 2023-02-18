@@ -5,13 +5,13 @@ import { range } from "./range";
 import { getVideoInput } from "./video-input";
 import { GameOutput } from "./game-output";
 import { GameWorld } from "./game-world";
+import { initUI, updateTogglePoseDetectionType } from "./ui";
 
 const MAX_POSES = 4;
-const DETECTOR_TYPE = SUPPORTED_DETECTORS.MoveNet;
+let detectorType: SUPPORTED_DETECTORS = SUPPORTED_DETECTORS.MoveNet;
 
 let detector: PoseDetector;
 let videoInput: HTMLVideoElement;
-let gameOutput: GameOutput;
 let currentPoses: Pose[] = [];
 let gameWorld: GameWorld;
 
@@ -20,7 +20,7 @@ let gameWorld: GameWorld;
  */
 async function gameLoop() {
     const minAccuracy =
-        DETECTOR_TYPE === SUPPORTED_DETECTORS.MoveNet ? 0.2 : 0.4;
+        detectorType === SUPPORTED_DETECTORS.MoveNet ? 0.4 : 0.2;
     currentPoses = await detector.estimatePoses(videoInput, {
         maxPoses: MAX_POSES,
     });
@@ -47,10 +47,10 @@ function getGameWorld() {
 
 async function init() {
     const videoInputInfo = await getVideoInput();
-    detector = await getDetector(DETECTOR_TYPE);
+    detector = await getDetector(detectorType);
     videoInput = videoInputInfo.videoElement;
     gameWorld = new GameWorld({ maxPlayers: MAX_POSES });
-    gameOutput = new GameOutput(document.getElementById("pixi"), {
+    new GameOutput(document.getElementById("pixi"), {
         getGameWorld,
         margins: {
             vertical:
@@ -62,7 +62,31 @@ async function init() {
                 2,
         },
     });
+    initUI(onToggleDetectionType);
+    updateUI();
     gameLoop();
+}
+
+function updateUI() {
+    switch (detectorType) {
+        case SUPPORTED_DETECTORS.MoveNet:
+            updateTogglePoseDetectionType("Single - MoveNet");
+            break;
+        case SUPPORTED_DETECTORS.PoseNet:
+            updateTogglePoseDetectionType("Many - PoseNet");
+            break;
+    }
+}
+
+async function onToggleDetectionType() {
+    console.log("onToggleDetectionType");
+    if (detectorType === SUPPORTED_DETECTORS.MoveNet) {
+        detectorType = SUPPORTED_DETECTORS.PoseNet;
+    } else {
+        detectorType = SUPPORTED_DETECTORS.MoveNet;
+    }
+    detector = await getDetector(detectorType);
+    updateUI();
 }
 
 init();

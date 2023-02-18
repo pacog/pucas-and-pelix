@@ -47,12 +47,19 @@
                 display: flex;
                 transform: scaleX(-1);
             }
+            #pose-detection-type {
+                position: absolute;
+                right: 10px;
+                top: 10px;
+                min-width: 80px;
+            }
         </style>
     </head>
     <body>
         <div id="main">
             <video id="video" playsinline></video>
             <div id="pixi"></div>
+            <button type="button" id="pose-detection-type">Loading...</button>
         </div>
         <script type="module" src="/src/main.ts"></script>
     </body>
