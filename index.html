@@ -17,7 +17,7 @@
 
                 color-scheme: light dark;
                 color: rgba(255, 255, 255, 0.87);
-                background-color: #242424;
+                background-color: white;
 
                 font-synthesis: none;
                 text-rendering: optimizeLegibility;
@@ -39,12 +39,11 @@
                 transform: scaleX(-1);
                 opacity: 0;
             }
-            #pixi {
+            #output {
                 position: absolute;
                 width: 100%;
                 height: 100%;
                 inset: 0;
-                display: flex;
                 transform: scaleX(-1);
             }
             #pose-detection-type {
@@ -60,7 +59,7 @@
     <body>
         <div id="main">
             <video id="video" playsinline></video>
-            <div id="pixi"></div>
+            <canvas id="output"></canvas>
             <button type="button" id="pose-detection-type">Loading...</button>
         </div>
         <script type="module" src="/src/main.ts"></script>

@@ -50,7 +50,7 @@ async function init() {
     detector = await getDetector(detectorType);
     videoInput = videoInputInfo.videoElement;
     gameWorld = new GameWorld({ maxPlayers: MAX_POSES });
-    new GameOutput(document.getElementById("pixi"), {
+    new GameOutput(document.getElementById("output") as HTMLCanvasElement, {
         getGameWorld,
         margins: {
             vertical:
