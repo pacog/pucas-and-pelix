@@ -1,6 +1,7 @@
-import { Keypoint, Pose } from "@tensorflow-models/pose-detection";
+import { v4 as uuid } from "uuid";
+import { Pose } from "@tensorflow-models/pose-detection";
 import { Point } from "@mathigon/euclid";
-import { MAX_POSES, MIN_POSE_SCORE_COLLISIONS } from "../constants";
+import { MAX_POSES } from "../constants";
 import { PucasPelixPlayer } from "./player";
 import { PucasPelixObject } from "./object";
 import { range } from "../range";
@@ -13,10 +14,19 @@ interface GameWorldOptions {
         height: number;
     };
 }
+
+interface DestroyedObject {
+    id: string;
+    when: number; // milliseconds from world start
+    object: PucasPelixObject;
+    player: PucasPelixPlayer;
+}
+
 export class GameWorld {
     options: GameWorldOptions;
     players: PucasPelixPlayer[];
     objects: PucasPelixObject[];
+    destroyedObjects: DestroyedObject[];
     lastUpdate = 0;
 
     constructor(options: GameWorldOptions) {
@@ -25,6 +35,7 @@ export class GameWorld {
             (index) => new PucasPelixPlayer(index)
         );
         this.objects = [];
+        this.destroyedObjects = [];
     }
 
     update(currentTime: number, currentPoses: Pose[]) {
@@ -39,7 +50,7 @@ export class GameWorld {
             this.maybeAddObject(currentTime - this.lastUpdate);
         }
 
-        this.checkCollisions();
+        this.checkCollisions(currentTime);
 
         this.lastUpdate = currentTime;
     }
@@ -66,7 +77,7 @@ export class GameWorld {
         this.objects.push(newObj);
     }
 
-    private checkCollisions() {
+    private checkCollisions(currentTime: number) {
         const objects = this.objects;
 
         for (const player of this.players) {
@@ -74,14 +85,24 @@ export class GameWorld {
             for (const bound of bounds) {
                 for (const obj of objects) {
                     if (obj.collidesWith(bound)) {
-                        this.notifyCollision(player, obj);
+                        this.notifyCollision(player, obj, currentTime);
                     }
                 }
             }
         }
     }
 
-    private notifyCollision(player: PucasPelixPlayer, obj: PucasPelixObject) {
-        this.objects = this.objects.filter((o) => o.id !== obj.id);
+    private notifyCollision(
+        player: PucasPelixPlayer,
+        object: PucasPelixObject,
+        when: number
+    ) {
+        this.objects = this.objects.filter((o) => o.id !== object.id);
+        this.destroyedObjects.push({
+            id: uuid(),
+            player,
+            object,
+            when,
+        });
     }
 }

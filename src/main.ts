@@ -38,18 +38,22 @@ async function init() {
         maxPlayers: MAX_POSES,
         size: videoInputInfo.containerSize,
     });
-    new GameOutput(document.getElementById("output") as HTMLCanvasElement, {
-        getGameWorld,
-        margins: {
-            vertical:
-                (videoInputInfo.containerSize.height -
-                    (videoInputInfo.contentSize.height || 0) || 0) / 2,
-            horizontal:
-                (videoInputInfo.containerSize.width -
-                    (videoInputInfo.contentSize.width || 0)) /
-                2,
-        },
-    });
+    new GameOutput(
+        document.getElementById("foreground") as HTMLCanvasElement,
+        document.getElementById("background") as HTMLElement,
+        {
+            getGameWorld,
+            margins: {
+                vertical:
+                    (videoInputInfo.containerSize.height -
+                        (videoInputInfo.contentSize.height || 0) || 0) / 2,
+                horizontal:
+                    (videoInputInfo.containerSize.width -
+                        (videoInputInfo.contentSize.width || 0)) /
+                    2,
+            },
+        }
+    );
     updatePosesLoop();
     gameLoop();
 }
