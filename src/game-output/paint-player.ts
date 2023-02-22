@@ -2,8 +2,15 @@ import { Line, Point } from "@mathigon/euclid";
 import { Keypoint } from "@tensorflow-models/pose-detection";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { PucasPelixPlayer } from "../player";
-import { PLAYER_LINE_OPTIONS } from "./constants";
+import {
+    COLOR_FADED,
+    COLOR_FULL,
+    MAX_FULL_SCORE,
+    MIN_FULL_SCORE,
+    PLAYER_LINE_OPTIONS,
+} from "./constants";
 import { Projector } from "./projector";
+import chroma from "chroma-js";
 
 export function paintPlayer(
     canvas: RoughCanvas,
@@ -57,11 +64,10 @@ export function paintPlayer(
         if (!keypoint) {
             return;
         }
-        canvas.circle(
-            ...projector.project(keypoint),
-            SIZE_POINTS,
-            PLAYER_LINE_OPTIONS
-        );
+        canvas.circle(...projector.project(keypoint), SIZE_POINTS, {
+            ...PLAYER_LINE_OPTIONS,
+            stroke: getColorForKeypoints([keypoint]),
+        });
     });
 
     linesToPaint.forEach((line) => {
@@ -78,7 +84,10 @@ export function paintPlayer(
                 }
                 return projector.project(keypoint);
             }),
-            PLAYER_LINE_OPTIONS
+            {
+                ...PLAYER_LINE_OPTIONS,
+                stroke: getColorForKeypoints(keypoints as Keypoint[]),
+            }
         );
     });
 
@@ -96,9 +105,28 @@ export function paintPlayer(
                 }
                 return projector.project(keypoint);
             }),
-            PLAYER_LINE_OPTIONS
+            {
+                ...PLAYER_LINE_OPTIONS,
+                stroke: getColorForKeypoints(keypoints as Keypoint[]),
+            }
         );
     });
+}
+
+function getColorForKeypoints(keypoints: Keypoint[]) {
+    const minScore = keypoints.reduce((acc, keypoint) => {
+        return Math.min(acc, keypoint.score || 0);
+    }, 1);
+    if (minScore <= MIN_FULL_SCORE) {
+        return COLOR_FADED;
+    }
+    if (minScore >= MAX_FULL_SCORE) {
+        return COLOR_FULL;
+    }
+    const fadeRatio =
+        (minScore - MIN_FULL_SCORE) / (MAX_FULL_SCORE - MIN_FULL_SCORE);
+    const scale = chroma.scale([COLOR_FADED, COLOR_FULL]);
+    return scale(fadeRatio).hex();
 }
 
 function augmentKeypoints(keypoints: Map<string, Keypoint>) {

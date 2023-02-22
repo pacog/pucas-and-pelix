@@ -19,8 +19,7 @@ let gameWorld: GameWorld;
  * Updates game world depending on input
  */
 async function gameLoop() {
-    const minAccuracy =
-        detectorType === SUPPORTED_DETECTORS.MoveNet ? 0.15 : 0.15;
+    const minAccuracy = 0.05;
     currentPoses = await detector.estimatePoses(videoInput, {
         maxPoses: MAX_POSES,
     });

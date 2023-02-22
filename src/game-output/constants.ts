@@ -1,3 +1,10 @@
+export const COLOR_FULL = "#000000";
+export const COLOR_FADED = "#FFFFFF";
+// Threshold to paint lines of a player with the Full color, less than this will start fading it
+export const MAX_FULL_SCORE = 0.7;
+// Threshold to paint lines of a player with the faded color, less than this will do nothing, it will be completely faded already
+export const MIN_FULL_SCORE = 0.1;
+
 export const PLAYER_LINE_OPTIONS = {
     roughness: 2, // Numerical value indicating how rough the drawing is. A rectangle with the roughness of 0 would be a perfect rectangle. Default value is 1. There is no upper limit to this value, but a value over 10 is mostly useless.
 
@@ -5,7 +12,7 @@ export const PLAYER_LINE_OPTIONS = {
     bowing: 2,
 
     //String value representing the color of the drawn objects. Default value is black (#000000). If the this is set to none, the shape vectors do not contain a stroke (This is different from having a transparent stroke).
-    stroke: "#000000",
+    stroke: COLOR_FULL,
 
     // Numerical value to set the width of the strokes (in pixels). Default value is 1.
     strokeWidth: 4,
