@@ -1,14 +1,12 @@
 import { Pose, PoseDetector } from "@tensorflow-models/pose-detection";
 
-import { getDetector, SUPPORTED_DETECTORS } from "./pose-detection";
+import { getDetector } from "./pose-detection";
 import { range } from "./range";
 import { getVideoInput } from "./video-input";
 import { GameOutput } from "./game-output/game-output";
 import { GameWorld } from "./game-world";
-import { initUI, updateTogglePoseDetectionType } from "./ui";
 
 const MAX_POSES = 4;
-let detectorType: SUPPORTED_DETECTORS = SUPPORTED_DETECTORS.MoveNet;
 
 let detector: PoseDetector;
 let videoInput: HTMLVideoElement;
@@ -46,7 +44,7 @@ function getGameWorld() {
 
 async function init() {
     const videoInputInfo = await getVideoInput();
-    detector = await getDetector(detectorType);
+    detector = await getDetector();
     videoInput = videoInputInfo.videoElement;
     gameWorld = new GameWorld({ maxPlayers: MAX_POSES });
     new GameOutput(document.getElementById("output") as HTMLCanvasElement, {
@@ -61,31 +59,7 @@ async function init() {
                 2,
         },
     });
-    initUI(onToggleDetectionType);
-    updateUI();
     gameLoop();
-}
-
-function updateUI() {
-    switch (detectorType) {
-        case SUPPORTED_DETECTORS.MoveNet:
-            updateTogglePoseDetectionType("New - MoveNet");
-            break;
-        case SUPPORTED_DETECTORS.PoseNet:
-            updateTogglePoseDetectionType("Old - PoseNet");
-            break;
-    }
-}
-
-async function onToggleDetectionType() {
-    console.log("onToggleDetectionType");
-    if (detectorType === SUPPORTED_DETECTORS.MoveNet) {
-        detectorType = SUPPORTED_DETECTORS.PoseNet;
-    } else {
-        detectorType = SUPPORTED_DETECTORS.MoveNet;
-    }
-    detector = await getDetector(detectorType);
-    updateUI();
 }
 
 init();
