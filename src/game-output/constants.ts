@@ -5,6 +5,9 @@ export const MAX_FULL_SCORE = 0.7;
 // Threshold to paint lines of a player with the faded color, less than this will do nothing, it will be completely faded already
 export const MIN_FULL_SCORE = 0.1;
 
+export const OBJECT_STROKE = "#000000";
+export const OBJECT_FILL = "#BB0000";
+
 export const PLAYER_LINE_OPTIONS = {
     roughness: 2, // Numerical value indicating how rough the drawing is. A rectangle with the roughness of 0 would be a perfect rectangle. Default value is 1. There is no upper limit to this value, but a value over 10 is mostly useless.
 
@@ -31,4 +34,13 @@ export const PLAYER_LINE_OPTIONS = {
 
     // curveFitting
     // When drawing ellipses, circles, and arcs, Let RoughJS know how close should the rendered dimensions be when compared to the specified one. Default value is 0.95 - which means the rendered dimensions will be at least 95% close to the specified dimensions. A value of 1 will ensure that the dimensions are almost 100% accurate.
+};
+
+export const OBJECT_OPTIONS = {
+    roughness: 2,
+    bowing: 2,
+    stroke: OBJECT_STROKE,
+    strokeWidth: 4,
+    fill: OBJECT_FILL,
+    fillStyle: "dots",
 };

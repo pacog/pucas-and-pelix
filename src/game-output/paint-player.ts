@@ -1,7 +1,7 @@
 import { Line, Point } from "@mathigon/euclid";
 import { Keypoint } from "@tensorflow-models/pose-detection";
 import { RoughCanvas } from "roughjs/bin/canvas";
-import { PucasPelixPlayer } from "../player";
+import { PucasPelixPlayer } from "../game-world/player";
 import {
     COLOR_FADED,
     COLOR_FULL,

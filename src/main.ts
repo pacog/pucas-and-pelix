@@ -1,10 +1,8 @@
 import { Pose, PoseDetector } from "@tensorflow-models/pose-detection";
-
 import { getDetector } from "./pose-detection";
-import { range } from "./range";
 import { getVideoInput } from "./video-input";
 import { GameOutput } from "./game-output/game-output";
-import { GameWorld } from "./game-world";
+import { GameWorld } from "./game-world/game-world";
 import { MAX_POSES, MIN_POSE_SCORE } from "./constants";
 
 let detector: PoseDetector;
@@ -13,9 +11,52 @@ let currentPoses: Pose[] = [];
 let gameWorld: GameWorld;
 
 /**
- * Updates game world depending on input
+ * Updates game world
  */
-async function gameLoop() {
+function gameLoop() {
+    // TODO: check if too much time has passed, to run incremental updates
+    gameWorld.update(getCurrentTime(), currentPoses);
+
+    requestAnimationFrame(gameLoop);
+}
+
+async function updatePosesLoop() {
+    requestAnimationFrame(updatePosesLoop);
+    // TODO: This can be throttled
+    await updatePoses();
+}
+
+function getGameWorld() {
+    return gameWorld;
+}
+
+async function init() {
+    const videoInputInfo = await getVideoInput();
+    detector = await getDetector();
+    videoInput = videoInputInfo.videoElement;
+    gameWorld = new GameWorld({
+        maxPlayers: MAX_POSES,
+        size: videoInputInfo.containerSize,
+    });
+    new GameOutput(document.getElementById("output") as HTMLCanvasElement, {
+        getGameWorld,
+        margins: {
+            vertical:
+                (videoInputInfo.containerSize.height -
+                    (videoInputInfo.contentSize.height || 0) || 0) / 2,
+            horizontal:
+                (videoInputInfo.containerSize.width -
+                    (videoInputInfo.contentSize.width || 0)) /
+                2,
+        },
+    });
+    updatePosesLoop();
+    gameLoop();
+}
+
+init();
+
+async function updatePoses() {
     currentPoses = await detector.estimatePoses(videoInput, {
         maxPoses: MAX_POSES,
     });
@@ -29,36 +70,8 @@ async function gameLoop() {
                 ),
             };
         });
-
-    for (const i of range(0, MAX_POSES)) {
-        gameWorld.players[i].updateWithPose(currentPoses[i]);
-    }
-
-    requestAnimationFrame(gameLoop);
 }
 
-function getGameWorld() {
-    return gameWorld;
+function getCurrentTime() {
+    return Date.now();
 }
-
-async function init() {
-    const videoInputInfo = await getVideoInput();
-    detector = await getDetector();
-    videoInput = videoInputInfo.videoElement;
-    gameWorld = new GameWorld({ maxPlayers: MAX_POSES });
-    new GameOutput(document.getElementById("output") as HTMLCanvasElement, {
-        getGameWorld,
-        margins: {
-            vertical:
-                (videoInputInfo.containerSize.height -
-                    (videoInputInfo.contentSize.height || 0) || 0) / 2,
-            horizontal:
-                (videoInputInfo.containerSize.width -
-                    (videoInputInfo.contentSize.width || 0)) /
-                2,
-        },
-    });
-    gameLoop();
-}
-
-init();

@@ -1,7 +1,8 @@
 import rough from "roughjs";
 import { RoughCanvas } from "roughjs/bin/canvas";
-import { GameWorld } from "../game-world";
+import { GameWorld } from "../game-world/game-world";
 import { paintPlayer } from "./paint-player";
+import { paintObject } from "./paint-object";
 import { Projector, CanvasMargins } from "./projector";
 
 interface GameOutputOptions {
@@ -46,6 +47,10 @@ export class GameOutput {
         this.clearCanvas();
         gameWorld.players.forEach((player) => {
             paintPlayer(this.rc, player, this.projector);
+        });
+
+        gameWorld.objects.forEach((obj) => {
+            paintObject(this.rc, obj, this.projector);
         });
 
         this.raf = requestAnimationFrame(() => this.tick());
