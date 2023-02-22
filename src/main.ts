@@ -3,7 +3,7 @@ import { Pose, PoseDetector } from "@tensorflow-models/pose-detection";
 import { getDetector, SUPPORTED_DETECTORS } from "./pose-detection";
 import { range } from "./range";
 import { getVideoInput } from "./video-input";
-import { GameOutput } from "./game-output";
+import { GameOutput } from "./game-output/game-output";
 import { GameWorld } from "./game-world";
 import { initUI, updateTogglePoseDetectionType } from "./ui";
 
