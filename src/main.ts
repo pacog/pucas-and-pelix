@@ -5,8 +5,7 @@ import { range } from "./range";
 import { getVideoInput } from "./video-input";
 import { GameOutput } from "./game-output/game-output";
 import { GameWorld } from "./game-world";
-
-const MAX_POSES = 4;
+import { MAX_POSES, MIN_POSE_SCORE } from "./constants";
 
 let detector: PoseDetector;
 let videoInput: HTMLVideoElement;
@@ -17,17 +16,16 @@ let gameWorld: GameWorld;
  * Updates game world depending on input
  */
 async function gameLoop() {
-    const minAccuracy = 0.05;
     currentPoses = await detector.estimatePoses(videoInput, {
         maxPoses: MAX_POSES,
     });
     currentPoses = currentPoses
-        .filter((pose) => (pose.score || 0) >= minAccuracy)
+        .filter((pose) => (pose.score || 0) >= MIN_POSE_SCORE)
         .map((pose) => {
             return {
                 ...pose,
                 keypoints: pose.keypoints.filter(
-                    (keypoint) => (keypoint.score || 0) >= minAccuracy
+                    (keypoint) => (keypoint.score || 0) >= MIN_POSE_SCORE
                 ),
             };
         });
@@ -35,6 +33,7 @@ async function gameLoop() {
     for (const i of range(0, MAX_POSES)) {
         gameWorld.players[i].updateWithPose(currentPoses[i]);
     }
+
     requestAnimationFrame(gameLoop);
 }
 
