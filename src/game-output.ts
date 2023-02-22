@@ -1,6 +1,7 @@
 import { Line, Point } from "@mathigon/euclid";
 import { Keypoint } from "@tensorflow-models/pose-detection";
-import { Application, Graphics } from "pixi.js";
+import rough from "roughjs";
+import { RoughCanvas } from "roughjs/bin/canvas";
 import { GameWorld } from "./game-world";
 import { PucasPelixPlayer } from "./player";
 
@@ -9,38 +10,81 @@ interface GameOutputOptions {
     margins: { vertical: number; horizontal: number };
 }
 
+const LINE_OPTIONS = {
+    roughness: 2, // Numerical value indicating how rough the drawing is. A rectangle with the roughness of 0 would be a perfect rectangle. Default value is 1. There is no upper limit to this value, but a value over 10 is mostly useless.
+
+    //Numerical value indicating how curvy the lines are when drawing a sketch. A value of 0 will cause straight lines. Default value is 1.
+    bowing: 2,
+
+    //String value representing the color of the drawn objects. Default value is black (#000000). If the this is set to none, the shape vectors do not contain a stroke (This is different from having a transparent stroke).
+    stroke: "#000000",
+
+    // Numerical value to set the width of the strokes (in pixels). Default value is 1.
+    strokeWidth: 4,
+
+    // fill: '',
+    // String value representing the color used to fill a shape. In hachure style fills, this represents the color of the hachure lines. In dots style, it represents the color of the dots.
+    // Rough.js supports the following styles (Default value is hachure):
+    // hachure draws sketchy parallel lines with the same roughness as defined by the roughness and the bowing properties of the shape. It can be further configured using the fillWeight, hachureAngle, and hachureGap properties.
+    // solid is more like a conventional fill.
+    // zigzag draws zig-zag lines filling the shape
+    // cross-hatch Similar to hachure, but draws cross hatch lines (akin to two hachure fills 90 degrees from each other).
+    // dots Fills the shape with sketchy dots.
+    // dashed Similar to hachure but the individual lines are dashed. Dashes can be configured using the dashOffset and dashGap properties.
+    // zigzag-line Similar to hachure but individual lines are drawn in a zig-zag fashion. The size of the zig-zag can be configured using the zigzagOffset proeprty
+    // fillStyle:
+
+    // curveFitting
+    // When drawing ellipses, circles, and arcs, Let RoughJS know how close should the rendered dimensions be when compared to the specified one. Default value is 0.95 - which means the rendered dimensions will be at least 95% close to the specified dimensions. A value of 1 will ensure that the dimensions are almost 100% accurate.
+};
+
 /**
  * Will output the game world into the screen. Will take care of running its own game loop, and will request world data when needed.
  */
 export class GameOutput {
     options: GameOutputOptions;
-    app: Application;
-    playerGraphics: Graphics;
+    rc: RoughCanvas;
+    raf: number;
+    canvas: HTMLCanvasElement;
+    canvasContext: CanvasRenderingContext2D;
 
-    constructor(container: HTMLElement | null, options: GameOutputOptions) {
+    constructor(
+        container: HTMLCanvasElement | null,
+        options: GameOutputOptions
+    ) {
         if (!container) {
             throw new Error("GameOutput needs a container");
         }
         this.options = options;
+        this.canvas = container;
+        this.canvasContext = container.getContext(
+            "2d"
+        ) as CanvasRenderingContext2D;
         const { width, height } = container.getBoundingClientRect();
-        this.app = new Application({
-            antialias: true,
-            width,
-            height,
-            backgroundAlpha: 0,
-        });
-        container.appendChild(this.app.view as unknown as Node);
-        this.app.ticker.add(() => this.tick(options.getGameWorld()));
-
-        this.playerGraphics = new Graphics();
-        this.app.stage.addChild(this.playerGraphics);
+        container.setAttribute("width", width + "");
+        container.setAttribute("height", height + "");
+        this.rc = rough.canvas(container);
+        this.raf = requestAnimationFrame(() => this.tick());
     }
 
-    tick(gameWorld: GameWorld) {
-        this.playerGraphics.clear();
+    tick() {
+        const gameWorld = this.options.getGameWorld();
+
+        this.clearCanvas();
         gameWorld.players.forEach((player) => {
             this.paintPlayer(player);
         });
+
+        this.raf = requestAnimationFrame(() => this.tick());
+    }
+
+    clearCanvas() {
+        this.canvasContext.clearRect(
+            0,
+            0,
+            this.canvas.width,
+            this.canvas.height
+        );
     }
 
     project(coords: { x: number; y: number }): [number, number] {
@@ -51,10 +95,7 @@ export class GameOutput {
     }
 
     paintPlayer(player: PucasPelixPlayer) {
-        const COLOR_POINTS = 0xffffff;
         const SIZE_POINTS = 10;
-        const COLOR_LINES = 0xffffff;
-        const SIZE_LINES = 10;
 
         if (!player.pose) {
             return;
@@ -112,12 +153,11 @@ export class GameOutput {
             if (!keypoint) {
                 return;
             }
-            this.playerGraphics.beginFill(COLOR_POINTS, 1);
-            this.playerGraphics.drawCircle(
+            this.rc.circle(
                 ...this.project(keypoint),
-                SIZE_POINTS
+                SIZE_POINTS,
+                LINE_OPTIONS
             );
-            this.playerGraphics.endFill();
         });
 
         linesToPaint.forEach((line) => {
@@ -127,17 +167,15 @@ export class GameOutput {
             if (keypoints.some((keypoint) => !keypoint)) {
                 return;
             }
-            this.playerGraphics.lineStyle(SIZE_LINES, COLOR_LINES);
-            keypoints.forEach((keypoint, index) => {
-                if (!keypoint) {
-                    return;
-                }
-                if (index === 0) {
-                    this.playerGraphics.moveTo(...this.project(keypoint));
-                } else {
-                    this.playerGraphics.lineTo(...this.project(keypoint));
-                }
-            });
+            this.rc.linearPath(
+                keypoints.map((keypoint) => {
+                    if (!keypoint) {
+                        throw new Error("Empty keypoint");
+                    }
+                    return this.project(keypoint);
+                }),
+                LINE_OPTIONS
+            );
         });
     }
 }
