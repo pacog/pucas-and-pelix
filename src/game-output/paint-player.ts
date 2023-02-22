@@ -8,17 +8,19 @@ import {
     MAX_FULL_SCORE,
     MIN_FULL_SCORE,
     PLAYER_LINE_OPTIONS,
+    SIZE_PLAYER_POINTS,
+    SIZE_COLLIDABLE_POINTS,
+    PLAYER_COLLIDABLE_POINT_OPTIONS,
 } from "./constants";
 import { Projector } from "./projector";
 import chroma from "chroma-js";
+import { MIN_POSE_SCORE_COLLISIONS } from "../constants";
 
 export function paintPlayer(
     canvas: RoughCanvas,
     player: PucasPelixPlayer,
     projector: Projector
 ) {
-    const SIZE_POINTS = 10;
-
     if (!player.pose) {
         return;
     }
@@ -50,6 +52,13 @@ export function paintPlayer(
         ],
     ];
 
+    const specialPointsToPaint = [
+        "left_wrist",
+        "left_ankle",
+        "right_wrist",
+        "right_ankle",
+    ];
+
     const keypointsMap = new Map<string, Keypoint>();
     for (const keypoint of usefulBaseKeypoints) {
         if (keypoint.name) {
@@ -64,7 +73,7 @@ export function paintPlayer(
         if (!keypoint) {
             return;
         }
-        canvas.circle(...projector.project(keypoint), SIZE_POINTS, {
+        canvas.circle(...projector.project(keypoint), SIZE_PLAYER_POINTS, {
             ...PLAYER_LINE_OPTIONS,
             stroke: getColorForKeypoints([keypoint]),
         });
@@ -110,6 +119,16 @@ export function paintPlayer(
                 stroke: getColorForKeypoints(keypoints as Keypoint[]),
             }
         );
+    });
+
+    specialPointsToPaint.forEach((pointName) => {
+        const keypoint = augmentedKeypoints.get(pointName);
+        if (!keypoint || (keypoint.score || 0) < MIN_POSE_SCORE_COLLISIONS) {
+            return;
+        }
+        canvas.circle(...projector.project(keypoint), SIZE_COLLIDABLE_POINTS, {
+            ...PLAYER_COLLIDABLE_POINT_OPTIONS,
+        });
     });
 }
 
