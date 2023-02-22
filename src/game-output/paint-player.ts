@@ -17,30 +17,9 @@ export function paintPlayer(
     }
     const usefulBaseKeypoints = player.pose.keypoints;
 
-    const pointsToPaint = [
-        "left_eye",
-        "right_eye",
-        // "nose",
-        // "left_shoulder",
-        // "right_shoulder",
-        // "middle_eyes",
-        // "mouth_center",
-        // "mouth_right",
-        // "mouth_left",
-        // "top_head",
-        // "right_head",
-        // "left_head",
-        // "chin",
-    ];
+    const pointsToPaint = ["pelix_right_eye", "pelix_left_eye"];
     const linesToPaint = [
         ["left_shoulder", "right_shoulder"],
-        [
-            "left_shoulder",
-            "left_head",
-            "top_head",
-            "right_head",
-            "right_shoulder",
-        ],
         ["mouth_right", "mouth_left"],
         ["left_shoulder", "right_shoulder"],
         ["left_shoulder", "left_elbow", "left_wrist"],
@@ -52,6 +31,16 @@ export function paintPlayer(
         ["left_ankle", "left_knee"],
         ["right_hip", "right_knee"],
         ["right_ankle", "right_knee"],
+    ];
+
+    const curvesToPaint = [
+        [
+            "left_shoulder",
+            "left_head",
+            "top_head_tall",
+            "right_head",
+            "right_shoulder",
+        ],
     ];
 
     const keypointsMap = new Map<string, Keypoint>();
@@ -92,6 +81,24 @@ export function paintPlayer(
             PLAYER_LINE_OPTIONS
         );
     });
+
+    curvesToPaint.forEach((curve) => {
+        const keypoints = curve.map((pointName) =>
+            augmentedKeypoints.get(pointName)
+        );
+        if (keypoints.some((keypoint) => !keypoint)) {
+            return;
+        }
+        canvas.curve(
+            keypoints.map((keypoint) => {
+                if (!keypoint) {
+                    throw new Error("Empty keypoint");
+                }
+                return projector.project(keypoint);
+            }),
+            PLAYER_LINE_OPTIONS
+        );
+    });
 }
 
 function augmentKeypoints(keypoints: Map<string, Keypoint>) {
@@ -117,16 +124,36 @@ function augmentKeypoints(keypoints: Map<string, Keypoint>) {
             y: lineEyes.midpoint.y,
             score,
         });
-        const nosePoint = new Point(nose.x, nose.y);
-        const noseLine = lineEyes.parallel(nosePoint);
-        const mouthPoint = lineEyes.midpoint.reflect(noseLine);
-        result.set("mouth_center", {
-            name: "mouth_center",
-            x: mouthPoint.x,
-            y: mouthPoint.y,
+        const extraEyesSeparation = 0.75;
+        const moreOpenEyesLine = new Line(
+            new Point(
+                lineEyes.at(0 - extraEyesSeparation).x,
+                lineEyes.at(0 - extraEyesSeparation).y
+            ),
+            new Point(
+                lineEyes.at(1 + extraEyesSeparation).x,
+                lineEyes.at(1 + extraEyesSeparation).y
+            )
+        );
+        const noseLineDown = lineEyes.perpendicularBisector;
+        const eyesPosition = -2;
+        const heightPointEyes = noseLineDown.at(eyesPosition);
+        const openAndDownEyes = moreOpenEyesLine.parallel(heightPointEyes);
+        result.set("pelix_right_eye", {
+            name: "pelix_right_eye",
+            x: openAndDownEyes.at(-0.5).x,
+            y: openAndDownEyes.at(-0.5).y,
             score,
         });
-        const mouthLine = lineEyes.rotate(Math.PI, nosePoint);
+        result.set("pelix_left_eye", {
+            name: "pelix_left_eye",
+            x: openAndDownEyes.at(0.5).x,
+            y: openAndDownEyes.at(0.5).y,
+            score,
+        });
+
+        const mouthNoseRotationPoint = noseLineDown.at(-2);
+        const mouthLine = lineEyes.rotate(Math.PI, mouthNoseRotationPoint);
         result.set("mouth_right", {
             name: "mouth_right",
             x: mouthLine.at(0.25).x,
@@ -150,6 +177,12 @@ function augmentKeypoints(keypoints: Map<string, Keypoint>) {
             new Point(middleEyes.x, middleEyes.y),
             new Point(nose.x, nose.y)
         );
+        result.set("top_head_tall", {
+            name: "top_head_tall",
+            x: noseLine.at(-5).x,
+            y: noseLine.at(-5).y,
+            score,
+        });
         result.set("top_head", {
             name: "top_head",
             x: noseLine.at(-4).x,
@@ -170,16 +203,17 @@ function augmentKeypoints(keypoints: Map<string, Keypoint>) {
             new Point(rightEye.x, rightEye.y),
             new Point(leftEye.x, leftEye.y)
         );
+        const headWidth = 1.5;
         result.set("right_head", {
             name: "right_head",
-            x: lineEyes.at(-1).x,
-            y: lineEyes.at(-1).y,
+            x: lineEyes.at(0 - headWidth).x,
+            y: lineEyes.at(0 - headWidth).y,
             score,
         });
         result.set("left_head", {
             name: "left_head",
-            x: lineEyes.at(2).x,
-            y: lineEyes.at(2).y,
+            x: lineEyes.at(1 + headWidth).x,
+            y: lineEyes.at(1 + headWidth).y,
             score,
         });
     }
