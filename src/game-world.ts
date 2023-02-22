@@ -9,7 +9,7 @@ export class GameWorld {
 
     constructor(options: GameWorldOptions) {
         this.players = Array.from(range(0, options.maxPlayers)).map(
-            () => new PucasPelixPlayer()
+            (index) => new PucasPelixPlayer(index)
         );
     }
 }
