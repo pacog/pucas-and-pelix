@@ -3,7 +3,7 @@ import { Pose, PoseDetector } from "@tensorflow-models/pose-detection";
 import { getDetector, SUPPORTED_DETECTORS } from "./pose-detection";
 import { range } from "./range";
 import { getVideoInput } from "./video-input";
-import { GameOutput } from "./game-output";
+import { GameOutput } from "./game-output/game-output";
 import { GameWorld } from "./game-world";
 import { initUI, updateTogglePoseDetectionType } from "./ui";
 
@@ -19,8 +19,7 @@ let gameWorld: GameWorld;
  * Updates game world depending on input
  */
 async function gameLoop() {
-    const minAccuracy =
-        detectorType === SUPPORTED_DETECTORS.MoveNet ? 0.2 : 0.2;
+    const minAccuracy = 0.05;
     currentPoses = await detector.estimatePoses(videoInput, {
         maxPoses: MAX_POSES,
     });
