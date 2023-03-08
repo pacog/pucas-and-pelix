@@ -8,10 +8,6 @@ export function paintObject(
     obj: PucasPelixObject,
     projector: Projector
 ) {
-    canvas.rectangle(
-        ...projector.project({ x: obj.bounds.xMin, y: obj.bounds.yMin }),
-        obj.bounds.dx,
-        obj.bounds.dy,
-        OBJECT_OPTIONS
-    );
+    const vertices = obj.getPoligon().map((v) => projector.project(v));
+    canvas.polygon(vertices, OBJECT_OPTIONS);
 }

@@ -42,12 +42,14 @@ export class GameWorld {
         if (!this.lastUpdate) {
             this.lastUpdate = currentTime;
         }
+        const elapsedTime = currentTime - this.lastUpdate;
         for (const i of range(0, MAX_POSES)) {
             this.players[i].updateWithPose(currentPoses[i]);
         }
+        this.objects.forEach((obj) => obj.update(elapsedTime));
 
         if (!this.objects.length) {
-            this.maybeAddObject(currentTime - this.lastUpdate);
+            this.maybeAddObject(elapsedTime);
         }
 
         this.checkCollisions(currentTime);
