@@ -4,7 +4,8 @@ import { GameWorld } from "../game-world/game-world";
 import { paintPlayer } from "./paint-player";
 import { paintObject } from "./paint-object";
 import { Projector, CanvasMargins } from "./projector";
-import { Application, Graphics } from "pixi.js";
+import { Application, Graphics, Sprite } from "pixi.js";
+import { random } from "../utils/random";
 
 interface GameOutputOptions {
     getGameWorld: () => GameWorld;
@@ -20,7 +21,7 @@ export class GameOutput {
     raf: number;
     foregroundCanvas!: HTMLCanvasElement;
     foregroundCanvasContext!: CanvasRenderingContext2D;
-    backgroundGraphics!: Graphics;
+    backgroundApp!: Application;
     projector: Projector;
     lastPaintedDestroyedObject: number;
 
@@ -58,10 +59,12 @@ export class GameOutput {
             throw new Error("GameOutput needs a backgroundHTML");
         }
         const { width, height } = backgroundHTML.getBoundingClientRect();
-        const app = new Application({ backgroundAlpha: 0, width, height });
-        backgroundHTML.appendChild(app.view as any);
-        this.backgroundGraphics = new Graphics();
-        app.stage.addChild(this.backgroundGraphics);
+        this.backgroundApp = new Application({
+            backgroundAlpha: 0,
+            width,
+            height,
+        });
+        backgroundHTML.appendChild(this.backgroundApp.view as any);
     }
 
     tick() {
@@ -81,14 +84,19 @@ export class GameOutput {
             i < gameWorld.destroyedObjects.length;
             i++
         ) {
+            const variation = Math.floor(random(1, 7));
+            const splatter = Sprite.from(`/paint_${variation}.png`);
+            splatter.anchor.set(0.5);
             const obj = gameWorld.destroyedObjects[i].object;
-            this.backgroundGraphics.lineStyle(0); // draw a circle, set the lineStyle to zero so the circle doesn't have an outline
-            this.backgroundGraphics.beginFill(0xde3249, 0.1);
-            this.backgroundGraphics.drawCircle(
-                ...this.projector.project(obj.position),
-                100
-            );
-            this.backgroundGraphics.endFill();
+            const position = this.projector.project(obj.position);
+            // move the sprite to the center of the screen
+            splatter.x = position[0];
+            splatter.y = position[1];
+            splatter.tint = Math.random() * 0xffffff;
+            splatter.scale.set(random(0.3, 0.6));
+            splatter.angle = random(0, 360);
+
+            this.backgroundApp.stage.addChild(splatter);
             this.lastPaintedDestroyedObject = i;
         }
 
