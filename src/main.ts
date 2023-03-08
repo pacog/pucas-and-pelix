@@ -4,6 +4,7 @@ import { getVideoInput } from "./video-input";
 import { GameOutput } from "./game-output/game-output";
 import { GameWorld } from "./game-world/game-world";
 import { MAX_POSES, MIN_POSE_SCORE } from "./constants";
+import { playObjectAppeared, playObjectDestroyed } from "./game-output/sounds";
 
 let detector: PoseDetector;
 let videoInput: HTMLVideoElement;
@@ -34,9 +35,17 @@ async function init() {
     const videoInputInfo = await getVideoInput();
     detector = await getDetector();
     videoInput = videoInputInfo.videoElement;
+    const onObjectDestroyed = () => {
+        playObjectDestroyed();
+    };
+    const onObjectCreated = () => {
+        playObjectAppeared();
+    };
     gameWorld = new GameWorld({
         maxPlayers: MAX_POSES,
         size: videoInputInfo.containerSize,
+        onObjectDestroyed,
+        onObjectCreated,
     });
     new GameOutput(
         document.getElementById("foreground") as HTMLCanvasElement,

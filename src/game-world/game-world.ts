@@ -13,13 +13,8 @@ interface GameWorldOptions {
         width: number;
         height: number;
     };
-}
-
-interface DestroyedObject {
-    id: string;
-    when: number; // milliseconds from world start
-    object: PucasPelixObject;
-    player: PucasPelixPlayer;
+    onObjectDestroyed: (obj: DestroyedObject) => void;
+    onObjectCreated: (obj: PucasPelixObject) => void;
 }
 
 export class GameWorld {
@@ -77,6 +72,7 @@ export class GameWorld {
         );
         const newObj = new PucasPelixObject(position);
         this.objects.push(newObj);
+        this.options.onObjectCreated(newObj);
     }
 
     private checkCollisions(currentTime: number) {
@@ -100,11 +96,13 @@ export class GameWorld {
         when: number
     ) {
         this.objects = this.objects.filter((o) => o.id !== object.id);
-        this.destroyedObjects.push({
+        const detroyedObject = {
             id: uuid(),
             player,
             object,
             when,
-        });
+        };
+        this.destroyedObjects.push(detroyedObject);
+        this.options.onObjectDestroyed(detroyedObject);
     }
 }
