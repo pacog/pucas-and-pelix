@@ -9,5 +9,5 @@ export function paintObject(
     projector: Projector
 ) {
     const vertices = obj.getPoligon().map((v) => projector.project(v));
-    canvas.polygon(vertices, OBJECT_OPTIONS);
+    canvas.polygon(vertices, { ...OBJECT_OPTIONS, fill: obj.color });
 }

@@ -6,6 +6,7 @@ import { paintObject } from "./paint-object";
 import { Projector, CanvasMargins } from "./projector";
 import { Application, Graphics, Sprite } from "pixi.js";
 import { random } from "../utils/random";
+import chroma from "chroma-js";
 
 interface GameOutputOptions {
     getGameWorld: () => GameWorld;
@@ -92,7 +93,7 @@ export class GameOutput {
             // move the sprite to the center of the screen
             splatter.x = position[0];
             splatter.y = position[1];
-            splatter.tint = Math.random() * 0xffffff;
+            splatter.tint = chroma(obj.color).num();
             splatter.scale.set(random(0.3, 0.6));
             splatter.angle = random(0, 360);
 
