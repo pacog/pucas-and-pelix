@@ -4,7 +4,7 @@ import { range } from "../range";
 import { collides } from "../utils/collides";
 import { random, randomItem } from "../utils/random";
 
-const MAX_OBJECT_AGE = 3_000; // ms
+const MAX_OBJECT_AGE = 10_000; // ms
 const MAX_ROTATION_SPEED = 0.5;
 const MIN_SIDES = 3;
 const MAX_SIDES = 8;
@@ -87,5 +87,9 @@ export class PucasPelixObject {
 
     isTooOld() {
         return this.age >= MAX_OBJECT_AGE;
+    }
+
+    getTimeToDie() {
+        return Math.max(MAX_OBJECT_AGE - this.age, 0);
     }
 }
