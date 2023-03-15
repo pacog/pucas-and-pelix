@@ -6,26 +6,39 @@ import { MIN_POSE_SCORE_COLLISIONS } from "../constants";
 export enum PlayerType {
     PUCAS,
     PELIX,
+    PAPIP,
+    PAMIP,
 }
 
 const COLLIDABLE_BBOX_SIZE = 10;
+const HAPPY_AFTER_DESTROYING = 3000;
 
 export class PucasPelixPlayer {
     id: string;
     pose: Pose | null = null;
     type: PlayerType;
+    destroyedObjects: DestroyedObject[] = [];
+    currentTime: number | null;
 
     constructor(index: number) {
         this.id = uuid();
-        if (index % 2 === 1) {
-            this.type = PlayerType.PELIX;
-        } else {
+        this.currentTime = null;
+        if (index % 4 === 0) {
             this.type = PlayerType.PUCAS;
+        }
+        if (index % 4 === 1) {
+            this.type = PlayerType.PELIX;
+        }
+        if (index % 4 === 2) {
+            this.type = PlayerType.PAPIP;
+        } else {
+            this.type = PlayerType.PAMIP;
         }
     }
 
-    updateWithPose(pose: Pose) {
+    updateWithPose(pose: Pose, currentTime: number) {
         this.pose = pose || null;
+        this.currentTime = currentTime;
     }
 
     getCollidableBounds() {
@@ -52,5 +65,33 @@ export class PucasPelixPlayer {
                     keypoint.y + COLLIDABLE_BBOX_SIZE / 2
                 )
         );
+    }
+
+    notifyObjectDestroyed(obj: DestroyedObject) {
+        console.log("notifyObjectDestroyed", obj);
+        this.destroyedObjects.push(obj);
+    }
+
+    isHappy() {
+        if (!this.destroyedObjects.length || !this.currentTime) {
+            return;
+        }
+        const lastDestroyed =
+            this.destroyedObjects[this.destroyedObjects.length - 1];
+        const timeSinceDestruction = this.currentTime - lastDestroyed.when;
+        return timeSinceDestruction < HAPPY_AFTER_DESTROYING;
+    }
+
+    getHappyColor() {
+        switch (this.type) {
+            case PlayerType.PUCAS:
+                return "#3a86ff";
+            case PlayerType.PELIX:
+                return "#8338ec";
+            case PlayerType.PAPIP:
+                return "#ff006e";
+            default:
+                return "#fb5607";
+        }
     }
 }

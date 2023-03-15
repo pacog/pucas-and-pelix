@@ -13,14 +13,12 @@ interface GameWorldOptions {
         width: number;
         height: number;
     };
+    onObjectDestroyed: (obj: DestroyedObject) => void;
+    onObjectDiedNaturally: (obj: PucasPelixObject) => void;
+    onObjectCreated: (obj: PucasPelixObject) => void;
 }
 
-interface DestroyedObject {
-    id: string;
-    when: number; // milliseconds from world start
-    object: PucasPelixObject;
-    player: PucasPelixPlayer;
-}
+const CREATE_OBJECT_EVERY = 3_000; // ms
 
 export class GameWorld {
     options: GameWorldOptions;
@@ -44,21 +42,39 @@ export class GameWorld {
         }
         const elapsedTime = currentTime - this.lastUpdate;
         for (const i of range(0, MAX_POSES)) {
-            this.players[i].updateWithPose(currentPoses[i]);
+            this.players[i].updateWithPose(currentPoses[i], currentTime);
         }
         this.objects.forEach((obj) => obj.update(elapsedTime));
 
-        if (!this.objects.length) {
-            this.maybeAddObject(elapsedTime);
-        }
+        this.deleteOldObjects();
+        this.maybeAddObject(elapsedTime);
 
         this.checkCollisions(currentTime);
 
         this.lastUpdate = currentTime;
     }
 
+    private deleteOldObjects() {
+        const remainingObjects: PucasPelixObject[] = [];
+        const deletedObjects: PucasPelixObject[] = [];
+        for (const obj of this.objects) {
+            if (obj.isTooOld()) {
+                deletedObjects.push(obj);
+            } else {
+                remainingObjects.push(obj);
+            }
+        }
+        this.objects = remainingObjects;
+        deletedObjects.forEach((obj) =>
+            this.options.onObjectDiedNaturally(obj)
+        );
+    }
+
     private maybeAddObject(elapsedTime: number) {
-        const addObjectEvery = 3_000; // ms
+        if (this.objects.length) {
+            return;
+        }
+        const addObjectEvery = CREATE_OBJECT_EVERY; // ms
         const chance = elapsedTime / addObjectEvery;
         if (Math.random() > chance) {
             return;
@@ -77,6 +93,7 @@ export class GameWorld {
         );
         const newObj = new PucasPelixObject(position);
         this.objects.push(newObj);
+        this.options.onObjectCreated(newObj);
     }
 
     private checkCollisions(currentTime: number) {
@@ -100,11 +117,14 @@ export class GameWorld {
         when: number
     ) {
         this.objects = this.objects.filter((o) => o.id !== object.id);
-        this.destroyedObjects.push({
+        const detroyedObject = {
             id: uuid(),
             player,
             object,
             when,
-        });
+        };
+        this.destroyedObjects.push(detroyedObject);
+        player.notifyObjectDestroyed(detroyedObject);
+        this.options.onObjectDestroyed(detroyedObject);
     }
 }
