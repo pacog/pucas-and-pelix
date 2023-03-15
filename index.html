@@ -61,6 +61,16 @@
                 height: 100vh;
                 width: 100vw;
             }
+            #bg {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                background-image: url(./img/bg-paper.jpg);
+                background-size: 256px 256px;
+                background-repeat: repeat;
+                opacity: 0.5;
+            }
             #video {
                 position: absolute;
                 inset: 0;
@@ -114,6 +124,7 @@
     </head>
     <body>
         <div id="main">
+            <div id="bg"></div>
             <video id="video" playsinline></video>
             <div id="background"></div>
             <canvas id="foreground"></canvas>
