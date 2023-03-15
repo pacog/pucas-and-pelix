@@ -1,4 +1,4 @@
-import { Point, Bounds, Circle } from "@mathigon/euclid";
+import { Point, Bounds, Circle, TWO_PI } from "@mathigon/euclid";
 import { v4 as uuid } from "uuid";
 import { range } from "../range";
 import { collides } from "../utils/collides";
@@ -49,8 +49,15 @@ export class PucasPelixObject {
     /** Revolutions per second */
     rotationSpeed: number;
     color: string;
+    direction: number; // In radians
+    speed: number;
+    screenBounds: Bounds;
 
-    constructor(position: Point) {
+    constructor(
+        position: Point,
+        speed: number,
+        screenSize: { height: number; width: number }
+    ) {
         this.id = uuid();
         this.age = 0;
         this.position = position;
@@ -67,11 +74,28 @@ export class PucasPelixObject {
             upperLeft.y,
             lowerRight.y
         );
+
+        this.direction = random(0, TWO_PI);
+        this.speed = speed;
+        this.screenBounds = new Bounds(
+            0,
+            screenSize.width,
+            0,
+            screenSize.height
+        );
     }
 
     update(elapsedTimeMs: number) {
         this.age += elapsedTimeMs;
         this.rotation += (this.rotationSpeed * elapsedTimeMs) / 1000;
+        const addedPosition = new Point(
+            Math.cos(this.direction) * this.speed,
+            Math.sin(this.direction) * this.speed
+        );
+        this.position = this.position.add(addedPosition);
+        if (!this.screenBounds.contains(this.position)) {
+            this.direction += Math.PI;
+        }
     }
 
     getPoligon() {

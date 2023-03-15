@@ -7,6 +7,8 @@ import { PucasPelixObject } from "./object";
 import { range } from "../range";
 import { random } from "../utils/random";
 
+const OBJECTS_NEXT_LEVEL = [5, 10, 15, 20, 25];
+
 interface GameWorldOptions {
     maxPlayers: number;
     size: {
@@ -71,7 +73,7 @@ export class GameWorld {
     }
 
     private maybeAddObject(elapsedTime: number) {
-        if (this.objects.length) {
+        if (this.objects.length >= this.getMaxObjects()) {
             return;
         }
         const addObjectEvery = CREATE_OBJECT_EVERY; // ms
@@ -91,9 +93,33 @@ export class GameWorld {
                 (1 - marginRatio) * this.options.size.height
             )
         );
-        const newObj = new PucasPelixObject(position);
+        const newObj = new PucasPelixObject(
+            position,
+            this.getRandomObjectSpeed(),
+            this.options.size
+        );
         this.objects.push(newObj);
         this.options.onObjectCreated(newObj);
+    }
+
+    private getMaxObjects() {
+        if (this.destroyedObjects.length < OBJECTS_NEXT_LEVEL[0]) {
+            return 1;
+        }
+        if (this.destroyedObjects.length < OBJECTS_NEXT_LEVEL[4]) {
+            return 2;
+        }
+        return 3;
+    }
+
+    private getRandomObjectSpeed() {
+        if (this.destroyedObjects.length < OBJECTS_NEXT_LEVEL[2]) {
+            return 0;
+        }
+        if (this.destroyedObjects.length < OBJECTS_NEXT_LEVEL[3]) {
+            return random(1, 2);
+        }
+        return random(2, 4);
     }
 
     private checkCollisions(currentTime: number) {
