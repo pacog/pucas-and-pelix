@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Pucas & Pelix</title>
+        <style>
+            body {
+                margin: 0;
+            }
+            :root {
+                font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+                font-size: 16px;
+                line-height: 24px;
+                font-weight: 400;
+
+                color-scheme: light dark;
+                color: rgba(255, 255, 255, 0.87);
+                background-color: white;
+
+                font-synthesis: none;
+                text-rendering: optimizeLegibility;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                -webkit-text-size-adjust: 100%;
+            }
+            #main {
+                position: relative;
+                margin: 0;
+                height: 100vh;
+                width: 100vw;
+            }
+            #video {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                transform: scaleX(-1);
+                opacity: 0;
+            }
+            #background {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                inset: 0;
+                transform: scaleX(-1);
+                display: flex;
+                opacity: 0.5;
+            }
+            #foreground {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                inset: 0;
+                transform: scaleX(-1);
+            }
+            #ui {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                inset: 0;
+            }
+            #ui-sound {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                height: 32px;
+                width: 32px;
+                background-image: url(/icons/no_sound.png);
+                background-size: 32px 32px;
+                background-position: center;
+                background-repeat: no-repeat;
+                cursor: pointer;
+                opacity: 0.5;
+                transition: opacity 0.3s ease-in-out;
+            }
+            #ui-sound.ui-sound-on {
+                background-image: url(/icons/sound.png);
+                opacity: 1;
+            }
+        </style>
+      <script type="module" crossorigin src="/assets/index-06867c5a.js"></script>
+    </head>
+    <body>
+        <div id="main">
+            <video id="video" playsinline></video>
+            <div id="background"></div>
+            <canvas id="foreground"></canvas>
+            <div id="ui">
+                <div aria-roledescription="button" id="ui-sound"></div>
+            </div>
+        </div>
+        
+    </body>
+</html>
