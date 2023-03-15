@@ -56,3 +56,7 @@ export function playPlayerHappy() {
         playerHappySounds.playRandom();
     }, 500);
 }
+
+export function setMute(shouldMute: boolean) {
+    Howler.mute(shouldMute);
+}
