@@ -30,14 +30,14 @@ const appearSounds = new SoundSet([
 ]);
 
 const destroyedSounds = new SoundSet([
-    "/sounds/destroyed_1.mp3",
-    "/sounds/destroyed_2.mp3",
     "/sounds/destroyed_3.mp3",
     "/sounds/destroyed_4.mp3",
     "/sounds/destroyed_5.mp3",
 ]);
 
-const dieNaturallySounds = new SoundSet(["/sounds/destroyed_1.mp3"]);
+const playerHappySounds = new SoundSet(["/sounds/destroyed_1.mp3"]);
+
+const dieNaturallySounds = new SoundSet(["/sounds/destroyed_2.mp3"]);
 
 export function playObjectDestroyed() {
     destroyedSounds.playRandom();
@@ -49,4 +49,10 @@ export function playObjectAppeared() {
 
 export function playObjectDiedNaturally() {
     dieNaturallySounds.playRandom();
+}
+
+export function playPlayerHappy() {
+    setTimeout(() => {
+        playerHappySounds.playRandom();
+    }, 500);
 }

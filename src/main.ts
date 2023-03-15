@@ -8,6 +8,7 @@ import {
     playObjectAppeared,
     playObjectDestroyed,
     playObjectDiedNaturally,
+    playPlayerHappy,
 } from "./game-output/sounds";
 
 let detector: PoseDetector;
@@ -41,6 +42,7 @@ async function init() {
     videoInput = videoInputInfo.videoElement;
     const onObjectDestroyed = () => {
         playObjectDestroyed();
+        playPlayerHappy();
     };
     const onObjectCreated = () => {
         playObjectAppeared();

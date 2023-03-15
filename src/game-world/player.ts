@@ -11,7 +11,7 @@ export enum PlayerType {
 }
 
 const COLLIDABLE_BBOX_SIZE = 10;
-const HAPPY_AFTER_DESTROYING = 1000;
+const HAPPY_AFTER_DESTROYING = 3000;
 
 export class PucasPelixPlayer {
     id: string;
@@ -73,14 +73,12 @@ export class PucasPelixPlayer {
     }
 
     isHappy() {
-        console.log("isHappy");
         if (!this.destroyedObjects.length || !this.currentTime) {
             return;
         }
         const lastDestroyed =
             this.destroyedObjects[this.destroyedObjects.length - 1];
         const timeSinceDestruction = this.currentTime - lastDestroyed.when;
-        console.log(timeSinceDestruction);
         return timeSinceDestruction < HAPPY_AFTER_DESTROYING;
     }
 
