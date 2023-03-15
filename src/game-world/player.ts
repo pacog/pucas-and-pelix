@@ -68,7 +68,6 @@ export class PucasPelixPlayer {
     }
 
     notifyObjectDestroyed(obj: DestroyedObject) {
-        console.log("notifyObjectDestroyed", obj);
         this.destroyedObjects.push(obj);
     }
 
