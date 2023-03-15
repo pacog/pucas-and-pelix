@@ -9,7 +9,9 @@ import {
     playObjectDestroyed,
     playObjectDiedNaturally,
     playPlayerHappy,
+    setMute,
 } from "./game-output/sounds";
+import { PucasPelixUI } from "./ui/ui";
 
 let detector: PoseDetector;
 let videoInput: HTMLVideoElement;
@@ -37,6 +39,11 @@ function getGameWorld() {
 }
 
 async function init() {
+    const ui = new PucasPelixUI({
+        onSoundChange: (isSoundOn) => {
+            setMute(!isSoundOn);
+        },
+    });
     const videoInputInfo = await getVideoInput();
     detector = await getDetector();
     videoInput = videoInputInfo.videoElement;
