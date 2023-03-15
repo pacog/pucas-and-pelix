@@ -42,7 +42,7 @@ export class GameWorld {
         }
         const elapsedTime = currentTime - this.lastUpdate;
         for (const i of range(0, MAX_POSES)) {
-            this.players[i].updateWithPose(currentPoses[i]);
+            this.players[i].updateWithPose(currentPoses[i], currentTime);
         }
         this.objects.forEach((obj) => obj.update(elapsedTime));
 
@@ -124,6 +124,7 @@ export class GameWorld {
             when,
         };
         this.destroyedObjects.push(detroyedObject);
+        player.notifyObjectDestroyed(detroyedObject);
         this.options.onObjectDestroyed(detroyedObject);
     }
 }

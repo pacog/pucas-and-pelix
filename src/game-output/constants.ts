@@ -1,5 +1,4 @@
 export const COLOR_FULL = "#000000";
-export const COLOR_FADED = "#FFFFFF";
 // Threshold to paint lines of a player with the Full color, less than this will start fading it
 export const MAX_FULL_SCORE = 0.7;
 // Threshold to paint lines of a player with the faded color, less than this will do nothing, it will be completely faded already

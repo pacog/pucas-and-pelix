@@ -3,7 +3,6 @@ import { Keypoint } from "@tensorflow-models/pose-detection";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { PucasPelixPlayer } from "../game-world/player";
 import {
-    COLOR_FADED,
     COLOR_FULL,
     MAX_FULL_SCORE,
     MIN_FULL_SCORE,
@@ -24,6 +23,20 @@ export function paintPlayer(
     if (!player.pose) {
         return;
     }
+
+    const isHappy = player.isHappy();
+
+    const colorFull = isHappy ? player.getHappyColor() : COLOR_FULL;
+    const colorFaded = chroma(colorFull).alpha(0).hex();
+
+    const lineOptions = isHappy
+        ? {
+              ...PLAYER_LINE_OPTIONS,
+              roughness: 5,
+              bowing: 3,
+          }
+        : PLAYER_LINE_OPTIONS;
+
     const usefulBaseKeypoints = player.pose.keypoints;
 
     const pointsToPaint = ["pelix_right_eye", "pelix_left_eye"];
@@ -74,8 +87,8 @@ export function paintPlayer(
             return;
         }
         canvas.circle(...projector.project(keypoint), SIZE_PLAYER_POINTS, {
-            ...PLAYER_LINE_OPTIONS,
-            stroke: getColorForKeypoints([keypoint]),
+            ...lineOptions,
+            stroke: getColorForKeypoints([keypoint], colorFaded, colorFull),
         });
     });
 
@@ -94,8 +107,12 @@ export function paintPlayer(
                 return projector.project(keypoint);
             }),
             {
-                ...PLAYER_LINE_OPTIONS,
-                stroke: getColorForKeypoints(keypoints as Keypoint[]),
+                ...lineOptions,
+                stroke: getColorForKeypoints(
+                    keypoints as Keypoint[],
+                    colorFaded,
+                    colorFull
+                ),
             }
         );
     });
@@ -115,8 +132,12 @@ export function paintPlayer(
                 return projector.project(keypoint);
             }),
             {
-                ...PLAYER_LINE_OPTIONS,
-                stroke: getColorForKeypoints(keypoints as Keypoint[]),
+                ...lineOptions,
+                stroke: getColorForKeypoints(
+                    keypoints as Keypoint[],
+                    colorFaded,
+                    colorFull
+                ),
             }
         );
     });
@@ -132,19 +153,23 @@ export function paintPlayer(
     });
 }
 
-function getColorForKeypoints(keypoints: Keypoint[]) {
+function getColorForKeypoints(
+    keypoints: Keypoint[],
+    colorFaded: string,
+    colorFull: string
+) {
     const minScore = keypoints.reduce((acc, keypoint) => {
         return Math.min(acc, keypoint.score || 0);
     }, 1);
     if (minScore <= MIN_FULL_SCORE) {
-        return COLOR_FADED;
+        return colorFaded;
     }
     if (minScore >= MAX_FULL_SCORE) {
-        return COLOR_FULL;
+        return colorFull;
     }
     const fadeRatio =
         (minScore - MIN_FULL_SCORE) / (MAX_FULL_SCORE - MIN_FULL_SCORE);
-    const scale = chroma.scale([COLOR_FADED, COLOR_FULL]);
+    const scale = chroma.scale([colorFaded, colorFull]);
     return scale(fadeRatio).hex();
 }
 
