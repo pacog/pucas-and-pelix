@@ -1,9 +1,10 @@
-import { Point, Bounds, TWO_PI, Circle } from "@mathigon/euclid";
+import { Point, Bounds, Circle } from "@mathigon/euclid";
 import { v4 as uuid } from "uuid";
 import { range } from "../range";
 import { collides } from "../utils/collides";
 import { random, randomItem } from "../utils/random";
 
+const MAX_OBJECT_AGE = 3_000; // ms
 const MAX_ROTATION_SPEED = 0.5;
 const MIN_SIDES = 3;
 const MAX_SIDES = 8;
@@ -38,6 +39,7 @@ const palettes = [
 
 export class PucasPelixObject {
     id: string;
+    age: number;
     position: Point;
     size: number;
     bounds: Bounds;
@@ -50,6 +52,7 @@ export class PucasPelixObject {
 
     constructor(position: Point) {
         this.id = uuid();
+        this.age = 0;
         this.position = position;
         this.size = random(MIN_SIZE, MAX_SIZE);
         this.rotation = random(0, 1);
@@ -67,6 +70,7 @@ export class PucasPelixObject {
     }
 
     update(elapsedTimeMs: number) {
+        this.age += elapsedTimeMs;
         this.rotation += (this.rotationSpeed * elapsedTimeMs) / 1000;
     }
 
@@ -79,5 +83,9 @@ export class PucasPelixObject {
 
     collidesWith(bounds: Bounds) {
         return collides(bounds, this.bounds);
+    }
+
+    isTooOld() {
+        return this.age >= MAX_OBJECT_AGE;
     }
 }

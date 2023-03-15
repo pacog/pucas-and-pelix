@@ -14,8 +14,11 @@ interface GameWorldOptions {
         height: number;
     };
     onObjectDestroyed: (obj: DestroyedObject) => void;
+    onObjectDiedNaturally: (obj: PucasPelixObject) => void;
     onObjectCreated: (obj: PucasPelixObject) => void;
 }
+
+const CREATE_OBJECT_EVERY = 3_000; // ms
 
 export class GameWorld {
     options: GameWorldOptions;
@@ -43,17 +46,35 @@ export class GameWorld {
         }
         this.objects.forEach((obj) => obj.update(elapsedTime));
 
-        if (!this.objects.length) {
-            this.maybeAddObject(elapsedTime);
-        }
+        this.deleteOldObjects();
+        this.maybeAddObject(elapsedTime);
 
         this.checkCollisions(currentTime);
 
         this.lastUpdate = currentTime;
     }
 
+    private deleteOldObjects() {
+        const remainingObjects: PucasPelixObject[] = [];
+        const deletedObjects: PucasPelixObject[] = [];
+        for (const obj of this.objects) {
+            if (obj.isTooOld()) {
+                deletedObjects.push(obj);
+            } else {
+                remainingObjects.push(obj);
+            }
+        }
+        this.objects = remainingObjects;
+        deletedObjects.forEach((obj) =>
+            this.options.onObjectDiedNaturally(obj)
+        );
+    }
+
     private maybeAddObject(elapsedTime: number) {
-        const addObjectEvery = 3_000; // ms
+        if (this.objects.length) {
+            return;
+        }
+        const addObjectEvery = CREATE_OBJECT_EVERY; // ms
         const chance = elapsedTime / addObjectEvery;
         if (Math.random() > chance) {
             return;
