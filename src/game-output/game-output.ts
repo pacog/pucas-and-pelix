@@ -95,7 +95,7 @@ export class GameOutput {
             i++
         ) {
             const variation = Math.floor(random(1, 7));
-            const splatter = Sprite.from(`/img/paint_${variation}.png`);
+            const splatter = Sprite.from(`./img/paint_${variation}.png`);
             splatter.anchor.set(0.5);
             const obj = gameWorld.destroyedObjects[i].object;
             const position = this.projector.project(obj.position);
