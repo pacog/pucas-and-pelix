@@ -2,6 +2,12 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Mynerve&display=swap"
+            rel="stylesheet"
+        />
         <link
             rel="apple-touch-icon"
             sizes="180x180"
@@ -38,15 +44,19 @@
         <style>
             body {
                 margin: 0;
+                font-family: "Mynerve", cursive;
             }
             :root {
+                --dark: #181819;
+                --dark-2: #373a3c;
+
                 font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
                 font-size: 16px;
                 line-height: 24px;
                 font-weight: 400;
 
                 color-scheme: light dark;
-                color: rgba(255, 255, 255, 0.87);
+                color: var(--dark);
                 background-color: white;
 
                 font-synthesis: none;
@@ -101,6 +111,18 @@
                 height: 100%;
                 inset: 0;
             }
+            #ui-menu-button {
+                position: absolute;
+                top: 12px;
+                right: 40px;
+                height: 32px;
+                width: 32px;
+                background-image: url(/icons/options.png);
+                background-size: 32px 32px;
+                background-position: center;
+                background-repeat: no-repeat;
+                cursor: pointer;
+            }
             #ui-sound {
                 position: absolute;
                 top: 12px;
@@ -119,16 +141,119 @@
                 background-image: url(/icons/sound.png);
                 opacity: 1;
             }
+            #ui-menu {
+                position: absolute;
+                inset: 0;
+                background: rgba(255, 255, 255, 0.87);
+                color: black;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease-in-out;
+            }
+            #ui-menu.ui-menu-shown {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .menu-title {
+                font-size: 4.5em;
+                line-height: normal;
+                padding: 0 0.5em;
+                margin-bottom: 2em;
+                text-align: center;
+            }
+
+            .menu-button {
+                font-size: 2em;
+                line-height: normal;
+                color: var(--dark-2);
+                cursor: pointer;
+            }
+            .menu-button-play {
+                font-size: 3em;
+                line-height: normal;
+                margin-top: 0.5em;
+                color: var(--dark-2);
+            }
+
+            #full-page-loading {
+                position: absolute;
+                inset: 0;
+                display: none;
+                background-color: white;
+            }
+            #main.is-loading #full-page-loading {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            #full-page-loading:before {
+                content: "";
+                display: block;
+                position: absolute;
+                inset: 0;
+                background-image: url(./img/bg-paper.jpg);
+                background-size: 256px 256px;
+                background-repeat: repeat;
+                opacity: 0.5;
+            }
+            #full-page-loading-inner {
+                width: 40px;
+                height: 26px;
+                --c: linear-gradient(currentColor 0 0);
+                background: var(--c) 0 100%, var(--c) 50% 100%,
+                    var(--c) 100% 100%;
+                background-size: 8px calc(100% - 4px);
+                background-repeat: no-repeat;
+                position: relative;
+            }
+            #full-page-loading-inner:before {
+                content: "";
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: currentColor;
+                left: 0;
+                top: 0;
+                animation: db3-1 1.5s linear infinite alternate,
+                    db3-2 0.75s cubic-bezier(0, 200, 0.8, 200) infinite;
+            }
+
+            @keyframes db3-1 {
+                100% {
+                    left: calc(100% - 8px);
+                }
+            }
+
+            @keyframes db3-2 {
+                100% {
+                    top: -0.1px;
+                }
+            }
         </style>
     </head>
     <body>
-        <div id="main">
+        <div id="main" class="is-loading">
             <div id="bg"></div>
             <video id="video" playsinline></video>
             <div id="background"></div>
             <canvas id="foreground"></canvas>
             <div id="ui">
+                <div aria-roledescription="button" id="ui-menu-button"></div>
                 <div aria-roledescription="button" id="ui-sound"></div>
+                <div id="ui-menu">
+                    <h1 class="menu-title">Pucas & Pelix</h1>
+                    <div id="play-button" class="menu-button menu-button-play">
+                        Play!
+                    </div>
+                </div>
+            </div>
+            <div id="full-page-loading">
+                <div id="full-page-loading-inner"></div>
             </div>
         </div>
         <script type="module" src="/src/main.ts"></script>
