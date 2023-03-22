@@ -42,7 +42,6 @@ export class PucasPelixObject {
     age: number;
     position: Point;
     size: number;
-    bounds: Bounds;
     /** From 0 to 1 */
     rotation: number;
     sides: number;
@@ -66,15 +65,6 @@ export class PucasPelixObject {
         this.sides = Math.floor(random(MIN_SIDES, MAX_SIDES));
         this.rotationSpeed = random(-MAX_ROTATION_SPEED, MAX_ROTATION_SPEED);
         this.color = randomItem(palettes[1]);
-        const upperLeft = this.position.shift(this.size / -2, this.size / -2);
-        const lowerRight = this.position.shift(this.size / 2, this.size / 2);
-        this.bounds = new Bounds(
-            upperLeft.x,
-            lowerRight.x,
-            upperLeft.y,
-            lowerRight.y
-        );
-
         this.direction = random(0, TWO_PI);
         this.speed = speed;
         this.screenBounds = new Bounds(
@@ -106,7 +96,15 @@ export class PucasPelixObject {
     }
 
     collidesWith(bounds: Bounds) {
-        return collides(bounds, this.bounds);
+        const upperLeft = this.position.shift(this.size / -2, this.size / -2);
+        const lowerRight = this.position.shift(this.size / 2, this.size / 2);
+        const objBounds = new Bounds(
+            upperLeft.x,
+            lowerRight.x,
+            upperLeft.y,
+            lowerRight.y
+        );
+        return collides(bounds, objBounds);
     }
 
     isTooOld() {
