@@ -24,7 +24,6 @@ let gameWorld: GameWorld;
 function gameLoop() {
     // TODO: check if too much time has passed, to run incremental updates
     gameWorld.update(getCurrentTime(), currentPoses);
-
     requestAnimationFrame(gameLoop);
 }
 
@@ -39,9 +38,12 @@ function getGameWorld() {
 }
 
 async function init() {
-    const ui = new PucasPelixUI({
+    new PucasPelixUI({
         onSoundChange: (isSoundOn) => {
             setMute(!isSoundOn);
+        },
+        onMenuChange: (isMenuShown) => {
+            console.log({ isMenuShown });
         },
     });
     const videoInputInfo = await getVideoInput();

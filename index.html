@@ -101,6 +101,18 @@
                 height: 100%;
                 inset: 0;
             }
+            #ui-menu-button {
+                position: absolute;
+                top: 12px;
+                right: 40px;
+                height: 32px;
+                width: 32px;
+                background-image: url(/icons/options.png);
+                background-size: 32px 32px;
+                background-position: center;
+                background-repeat: no-repeat;
+                cursor: pointer;
+            }
             #ui-sound {
                 position: absolute;
                 top: 12px;
@@ -119,6 +131,22 @@
                 background-image: url(/icons/sound.png);
                 opacity: 1;
             }
+            #ui-menu {
+                position: absolute;
+                inset: 0;
+                background: rgba(255, 255, 255, 0.87);
+                color: black;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease-in-out;
+            }
+            #ui-menu.ui-menu-shown {
+                opacity: 1;
+                pointer-events: auto;
+            }
         </style>
     </head>
     <body>
@@ -128,7 +156,9 @@
             <div id="background"></div>
             <canvas id="foreground"></canvas>
             <div id="ui">
+                <div aria-roledescription="button" id="ui-menu-button"></div>
                 <div aria-roledescription="button" id="ui-sound"></div>
+                <div id="ui-menu">Menu!</div>
             </div>
         </div>
         <script type="module" src="/src/main.ts"></script>
