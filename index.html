@@ -2,6 +2,12 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Mynerve&display=swap"
+            rel="stylesheet"
+        />
         <link
             rel="apple-touch-icon"
             sizes="180x180"
@@ -38,9 +44,11 @@
         <style>
             body {
                 margin: 0;
+                font-family: "Mynerve", cursive;
             }
             :root {
                 --dark: #181819;
+                --dark-2: #373a3c;
 
                 font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
                 font-size: 16px;
@@ -141,6 +149,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                flex-direction: column;
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease-in-out;
@@ -149,6 +158,27 @@
                 opacity: 1;
                 pointer-events: auto;
             }
+            .menu-title {
+                font-size: 4.5em;
+                line-height: normal;
+                padding: 0 0.5em;
+                margin-bottom: 2em;
+                text-align: center;
+            }
+
+            .menu-button {
+                font-size: 2em;
+                line-height: normal;
+                color: var(--dark-2);
+                cursor: pointer;
+            }
+            .menu-button-play {
+                font-size: 3em;
+                line-height: normal;
+                margin-top: 0.5em;
+                color: var(--dark-2);
+            }
+
             #full-page-loading {
                 position: absolute;
                 inset: 0;
@@ -215,7 +245,12 @@
             <div id="ui">
                 <div aria-roledescription="button" id="ui-menu-button"></div>
                 <div aria-roledescription="button" id="ui-sound"></div>
-                <div id="ui-menu">Menu!</div>
+                <div id="ui-menu">
+                    <h1 class="menu-title">Pucas & Pelix</h1>
+                    <div id="play-button" class="menu-button menu-button-play">
+                        Play!
+                    </div>
+                </div>
             </div>
             <div id="full-page-loading">
                 <div id="full-page-loading-inner"></div>

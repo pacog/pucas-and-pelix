@@ -15,6 +15,7 @@ interface PucasPelixUIOptions {
 export class PucasPelixUI {
     soundButton!: HTMLElement;
     menuButton!: HTMLElement;
+    playButton!: HTMLElement;
     menu!: HTMLElement;
     isSoundOn!: boolean;
     isMenuShown!: boolean;
@@ -64,13 +65,16 @@ export class PucasPelixUI {
     initMenu() {
         const menuButton = document.getElementById("ui-menu-button");
         const menu = document.getElementById("ui-menu");
-        if (!menuButton || !menu) {
+        const playButton = document.getElementById("play-button");
+        if (!menuButton || !menu || !playButton) {
             throw new Error("Couldn't find menu button or menu");
         }
         this.menuButton = menuButton;
         this.menu = menu;
+        this.playButton = playButton;
         this.isMenuShown = SHOW_MENU_AT_START;
         this.menuButton.addEventListener("click", () => this.toggleMenu());
+        this.playButton.addEventListener("click", () => this.toggleMenu());
         document.addEventListener("keydown", (evt) => {
             if (evt.key === "Escape") {
                 this.toggleMenu();
