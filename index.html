@@ -152,6 +152,7 @@
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease-in-out;
+                overflow: hidden;
             }
             #ui-menu.ui-menu-shown {
                 opacity: 1;
@@ -176,6 +177,10 @@
                 transform-origin: center;
                 transform: scale(0.9);
                 transition: transform 0.1s ease-in-out;
+                background: rgba(255, 255, 255, 0.87);
+                position: relative;
+                padding: 20px;
+                border-radius: 30px;
             }
             #play-button:hover {
                 transform: scale(1);
@@ -192,6 +197,22 @@
                 font-size: 0.7em;
                 line-height: normal;
                 color: var(--dark-3);
+                position: relative;
+                background: rgba(255, 255, 255, 0.87);
+            }
+            #pucas {
+                width: 175px;
+                height: auto;
+                position: absolute;
+                left: 2vw;
+                top: 40%;
+            }
+            #pelix {
+                width: 365px;
+                height: auto;
+                position: absolute;
+                right: -3vw;
+                top: 50%;
             }
 
             #full-page-loading {
@@ -261,12 +282,24 @@
                 <div aria-roledescription="button" id="ui-menu-button"></div>
                 <div aria-roledescription="button" id="ui-sound"></div>
                 <div id="ui-menu">
+                    <img
+                        id="pucas"
+                        src="/img/pucas.png"
+                        title="Pucas"
+                        alt="Pucas"
+                    /><img
+                        id="pelix"
+                        src="/img/pelix.png"
+                        title="Pelix"
+                        alt="Pelix"
+                    />
                     <h1 class="menu-title">
                         <img src="/img/title.png" title="Pucas & Pelix" />
                     </h1>
                     <div id="play-button" aria-roledescription="button">
                         <img src="/img/play.png" title="Play" />
                     </div>
+
                     <footer>
                         <span>2023 - Amsterdam</span> &bull;
                         <span>Sounds by Lucas & Felix Sierra Gomez</span> &bull;
