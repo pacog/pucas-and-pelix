@@ -3,6 +3,7 @@ import { getBoolean, setBoolean } from "../utils/localStorage";
 const IS_SOUND_ON = "isSoundOn";
 const SOUND_ON_CLASS = "ui-sound-on";
 const MENU_SHOWN_CLASS = "ui-menu-shown";
+const SHOW_MENU_AT_START = true;
 
 interface PucasPelixUIOptions {
     onSoundChange: (isSoundOn: boolean) => void;
@@ -21,8 +22,17 @@ export class PucasPelixUI {
 
     constructor(options: PucasPelixUIOptions) {
         this.options = options;
+        this.removeLoading();
         this.initSound();
         this.initMenu();
+    }
+
+    removeLoading() {
+        const main = document.getElementById("main");
+        if (!main) {
+            throw new Error("Couldn't find main container");
+        }
+        main.classList.remove("is-loading");
     }
 
     initSound() {
@@ -59,13 +69,14 @@ export class PucasPelixUI {
         }
         this.menuButton = menuButton;
         this.menu = menu;
-        this.isMenuShown = false;
+        this.isMenuShown = SHOW_MENU_AT_START;
         this.menuButton.addEventListener("click", () => this.toggleMenu());
         document.addEventListener("keydown", (evt) => {
             if (evt.key === "Escape") {
                 this.toggleMenu();
             }
         });
+        this.updateMenuUI();
     }
 
     toggleMenu() {

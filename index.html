@@ -40,13 +40,15 @@
                 margin: 0;
             }
             :root {
+                --dark: #181819;
+
                 font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
                 font-size: 16px;
                 line-height: 24px;
                 font-weight: 400;
 
                 color-scheme: light dark;
-                color: rgba(255, 255, 255, 0.87);
+                color: var(--dark);
                 background-color: white;
 
                 font-synthesis: none;
@@ -147,10 +149,65 @@
                 opacity: 1;
                 pointer-events: auto;
             }
+            #full-page-loading {
+                position: absolute;
+                inset: 0;
+                display: none;
+                background-color: white;
+            }
+            #main.is-loading #full-page-loading {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            #full-page-loading:before {
+                content: "";
+                display: block;
+                position: absolute;
+                inset: 0;
+                background-image: url(./img/bg-paper.jpg);
+                background-size: 256px 256px;
+                background-repeat: repeat;
+                opacity: 0.5;
+            }
+            #full-page-loading-inner {
+                width: 40px;
+                height: 26px;
+                --c: linear-gradient(currentColor 0 0);
+                background: var(--c) 0 100%, var(--c) 50% 100%,
+                    var(--c) 100% 100%;
+                background-size: 8px calc(100% - 4px);
+                background-repeat: no-repeat;
+                position: relative;
+            }
+            #full-page-loading-inner:before {
+                content: "";
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: currentColor;
+                left: 0;
+                top: 0;
+                animation: db3-1 1.5s linear infinite alternate,
+                    db3-2 0.75s cubic-bezier(0, 200, 0.8, 200) infinite;
+            }
+
+            @keyframes db3-1 {
+                100% {
+                    left: calc(100% - 8px);
+                }
+            }
+
+            @keyframes db3-2 {
+                100% {
+                    top: -0.1px;
+                }
+            }
         </style>
     </head>
     <body>
-        <div id="main">
+        <div id="main" class="is-loading">
             <div id="bg"></div>
             <video id="video" playsinline></video>
             <div id="background"></div>
@@ -159,6 +216,9 @@
                 <div aria-roledescription="button" id="ui-menu-button"></div>
                 <div aria-roledescription="button" id="ui-sound"></div>
                 <div id="ui-menu">Menu!</div>
+            </div>
+            <div id="full-page-loading">
+                <div id="full-page-loading-inner"></div>
             </div>
         </div>
         <script type="module" src="/src/main.ts"></script>
