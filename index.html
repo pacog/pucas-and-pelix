@@ -5,10 +5,6 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Mynerve&display=swap"
-            rel="stylesheet"
-        />
-        <link
             rel="apple-touch-icon"
             sizes="180x180"
             href="./favicon/apple-touch-icon.png"
@@ -44,11 +40,14 @@
         <style>
             body {
                 margin: 0;
-                font-family: "Mynerve", cursive;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji",
+                    "Segoe UI Emoji", "Segoe UI Symbol";
             }
             :root {
                 --dark: #181819;
                 --dark-2: #373a3c;
+                --dark-3: #56606a;
 
                 font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
                 font-size: 16px;
@@ -162,21 +161,37 @@
                 font-size: 4.5em;
                 line-height: normal;
                 padding: 0 0.5em;
-                margin-bottom: 2em;
                 text-align: center;
             }
 
-            .menu-button {
-                font-size: 2em;
-                line-height: normal;
-                color: var(--dark-2);
-                cursor: pointer;
+            .menu-title img {
+                width: 500px;
+                margin: 0 auto;
+                max-width: 100%;
+                height: auto;
             }
-            .menu-button-play {
-                font-size: 3em;
+
+            #play-button {
+                cursor: pointer;
+                transform-origin: center;
+                transform: scale(0.9);
+                transition: transform 0.1s ease-in-out;
+            }
+            #play-button:hover {
+                transform: scale(1);
+            }
+            #play-button img {
+                width: 100px;
+                height: auto;
+                margin: 0 auto;
+            }
+            #ui-menu footer {
+                margin-top: auto;
+                padding: 20px;
+                text-align: center;
+                font-size: 0.7em;
                 line-height: normal;
-                margin-top: 0.5em;
-                color: var(--dark-2);
+                color: var(--dark-3);
             }
 
             #full-page-loading {
@@ -246,10 +261,36 @@
                 <div aria-roledescription="button" id="ui-menu-button"></div>
                 <div aria-roledescription="button" id="ui-sound"></div>
                 <div id="ui-menu">
-                    <h1 class="menu-title">Pucas & Pelix</h1>
-                    <div id="play-button" class="menu-button menu-button-play">
-                        Play!
+                    <h1 class="menu-title">
+                        <img src="/img/title.png" title="Pucas & Pelix" />
+                    </h1>
+                    <div id="play-button" aria-roledescription="button">
+                        <img src="/img/play.png" title="Play" />
                     </div>
+                    <footer>
+                        <span>2023 - Amsterdam</span> &bull;
+                        <span>Sounds by Lucas & Felix Sierra Gomez</span> &bull;
+                        <span>Design by Lucas Sierra Gomez</span><br />
+                        <span>
+                            Programming by
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href="https://pacog.github.io/portfolio/"
+                                >Paco Gomez Granados</a
+                            >
+                        </span>
+                        &bull;
+                        <span>
+                            See the
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href="https://github.com/pacog/pucas-and-pelix"
+                                >code</a
+                            >
+                        </span>
+                    </footer>
                 </div>
             </div>
             <div id="full-page-loading">
