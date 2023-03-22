@@ -25,6 +25,7 @@ export class GameOutput {
     backgroundApp!: Application;
     projector: Projector;
     lastPaintedDestroyedObject: number;
+    enabled: boolean;
 
     constructor(
         foregroundHTMLCanvas: HTMLCanvasElement | null,
@@ -37,6 +38,7 @@ export class GameOutput {
         this.raf = requestAnimationFrame(() => this.tick());
         this.projector = new Projector(this.options.margins);
         this.lastPaintedDestroyedObject = -1;
+        this.enabled = true;
     }
 
     private createForegroundCanvas(
@@ -68,11 +70,17 @@ export class GameOutput {
         backgroundHTML.appendChild(this.backgroundApp.view as any);
     }
 
-    tick() {
-        const gameWorld = this.options.getGameWorld();
+    setEnabled(newEnabled: boolean) {
+        this.enabled = newEnabled;
+    }
 
-        this.paintForegroundObjects(gameWorld);
-        this.paintBGDestroyedObjects(gameWorld);
+    tick() {
+        if (this.enabled) {
+            const gameWorld = this.options.getGameWorld();
+
+            this.paintForegroundObjects(gameWorld);
+            this.paintBGDestroyedObjects(gameWorld);
+        }
 
         this.raf = requestAnimationFrame(() => this.tick());
     }

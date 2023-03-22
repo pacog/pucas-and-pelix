@@ -17,20 +17,36 @@ let detector: PoseDetector;
 let videoInput: HTMLVideoElement;
 let currentPoses: Pose[] = [];
 let gameWorld: GameWorld;
+let isMenuShown = false;
+let gameOutput: GameOutput;
+let currentTime = 0;
+let lastFrameTime: number;
+let currentFrameTime: number;
 
 /**
  * Updates game world
  */
 function gameLoop() {
-    // TODO: check if too much time has passed, to run incremental updates
-    gameWorld.update(getCurrentTime(), currentPoses);
+    if (lastFrameTime === undefined) {
+        lastFrameTime = Date.now();
+    }
+    currentFrameTime = Date.now();
+    const elapsed = currentFrameTime - lastFrameTime;
+    lastFrameTime = currentFrameTime;
+    if (!isMenuShown) {
+        currentTime += elapsed;
+        // TODO: check if too much time has passed, to run incremental updates
+        gameWorld.update(currentTime, currentPoses);
+    }
     requestAnimationFrame(gameLoop);
 }
 
 async function updatePosesLoop() {
     requestAnimationFrame(updatePosesLoop);
-    // TODO: This can be throttled
-    await updatePoses();
+    if (!isMenuShown) {
+        // TODO: This can be throttled
+        await updatePoses();
+    }
 }
 
 function getGameWorld() {
@@ -42,8 +58,11 @@ async function init() {
         onSoundChange: (isSoundOn) => {
             setMute(!isSoundOn);
         },
-        onMenuChange: (isMenuShown) => {
-            console.log({ isMenuShown });
+        onMenuChange: (newIsMenuShown) => {
+            isMenuShown = newIsMenuShown;
+            if (gameOutput) {
+                gameOutput.setEnabled(!isMenuShown);
+            }
         },
     });
     const videoInputInfo = await getVideoInput();
@@ -67,7 +86,7 @@ async function init() {
         onObjectCreated,
         onObjectDiedNaturally,
     });
-    new GameOutput(
+    gameOutput = new GameOutput(
         document.getElementById("foreground") as HTMLCanvasElement,
         document.getElementById("background") as HTMLElement,
         {
@@ -103,8 +122,4 @@ async function updatePoses() {
                 ),
             };
         });
-}
-
-function getCurrentTime() {
-    return Date.now();
 }

@@ -9,6 +9,8 @@ interface PucasPelixUIOptions {
     onMenuChange: (isMenuShown: boolean) => void;
 }
 
+// NOTE: no events listener are removed since this object will tsay alive for the duration of the page
+
 export class PucasPelixUI {
     soundButton!: HTMLElement;
     menuButton!: HTMLElement;
