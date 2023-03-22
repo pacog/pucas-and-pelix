@@ -11,7 +11,8 @@ export enum PlayerType {
 }
 
 const COLLIDABLE_BBOX_SIZE = 10;
-const HAPPY_AFTER_DESTROYING = 3000;
+const DELAY_HAPPY_AFTER_DESTROYING = 500;
+const HAPPY_AFTER_DESTROYING = 1500;
 
 export class PucasPelixPlayer {
     id: string;
@@ -78,7 +79,10 @@ export class PucasPelixPlayer {
         const lastDestroyed =
             this.destroyedObjects[this.destroyedObjects.length - 1];
         const timeSinceDestruction = this.currentTime - lastDestroyed.when;
-        return timeSinceDestruction < HAPPY_AFTER_DESTROYING;
+        return (
+            timeSinceDestruction > DELAY_HAPPY_AFTER_DESTROYING &&
+            timeSinceDestruction < HAPPY_AFTER_DESTROYING
+        );
     }
 
     getHappyColor() {
