@@ -144,6 +144,9 @@
                 position: absolute;
                 inset: 0;
                 background: rgba(255, 255, 255, 0.87);
+                background-image: url(/img/bg.webp);
+                background-position: center;
+                background-size: cover;
                 color: black;
                 display: flex;
                 align-items: center;
@@ -163,24 +166,32 @@
                 line-height: normal;
                 padding: 0 0.5em;
                 text-align: center;
+                position: relative;
             }
 
             .menu-title img {
+                position: relative;
                 width: 500px;
                 margin: 0 auto;
                 max-width: 100%;
                 height: auto;
+                mix-blend-mode: color-burn;
+            }
+            .menu-title img:nth-child(2) {
+                position: absolute;
+                inset: 0;
+                transform: translate(4px, 5px);
+                mix-blend-mode: color-burn;
+                filter: brightness(1.3) invert(0.17) saturate(2.6) sepia(0.25);
             }
 
             #play-button {
                 cursor: pointer;
                 transform-origin: center;
-                transform: scale(0.9);
+                transform: scale(0.95);
                 transition: transform 0.1s ease-in-out;
-                background: rgba(255, 255, 255, 0.87);
                 position: relative;
                 padding: 20px;
-                border-radius: 30px;
             }
             #play-button:hover {
                 transform: scale(1);
@@ -198,21 +209,39 @@
                 line-height: normal;
                 color: var(--dark-3);
                 position: relative;
-                background: rgba(255, 255, 255, 0.87);
+                background: rgba(255, 255, 255, 0.67);
+                border-radius: 2em 2em 0 0;
+            }
+            #ui-menu-chars {
+                position: absolute;
+                width: 100%;
+                max-width: 800px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                pointer-events: none;
             }
             #pucas {
                 width: 175px;
                 height: auto;
-                position: absolute;
-                left: 2vw;
-                top: 40%;
             }
             #pelix {
                 width: 365px;
                 height: auto;
-                position: absolute;
-                right: -3vw;
-                top: 50%;
+                position: relative;
+                left: 120px;
+            }
+            @media (max-width: 750px) {
+                #pucas {
+                    width: 100px;
+                    height: auto;
+                }
+                #pelix {
+                    width: 165px;
+                    height: auto;
+                    position: relative;
+                    left: 20px;
+                }
             }
 
             #full-page-loading {
@@ -282,19 +311,23 @@
                 <div aria-roledescription="button" id="ui-menu-button"></div>
                 <div aria-roledescription="button" id="ui-sound"></div>
                 <div id="ui-menu">
-                    <img
-                        id="pucas"
-                        src="/img/pucas.png"
-                        title="Pucas"
-                        alt="Pucas"
-                    /><img
-                        id="pelix"
-                        src="/img/pelix.png"
-                        title="Pelix"
-                        alt="Pelix"
-                    />
+                    <div id="ui-menu-chars">
+                        <img
+                            id="pucas"
+                            src="/img/pucas.png"
+                            title="Pucas"
+                            alt="Pucas"
+                        /><img
+                            id="pelix"
+                            src="/img/pelix.png"
+                            title="Pelix"
+                            alt="Pelix"
+                        />
+                    </div>
+
                     <h1 class="menu-title">
                         <img src="/img/title.png" title="Pucas & Pelix" />
+                        <img src="/img/title.png" />
                     </h1>
                     <div id="play-button" aria-roledescription="button">
                         <img src="/img/play.png" title="Play" />
