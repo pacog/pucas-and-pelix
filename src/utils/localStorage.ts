@@ -20,6 +20,13 @@ export function getString(key: string) {
     return result;
 }
 
-export function getBoolean(key: string) {
-    return getString(key) === "true";
+export function getBoolean(key: string, defaultValue = true) {
+    const localStorageString = getString(key);
+    if (
+        typeof localStorageString === "undefined" ||
+        localStorageString === null
+    ) {
+        return defaultValue;
+    }
+    return localStorageString === "true";
 }
