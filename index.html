@@ -5,6 +5,10 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
+            href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link
             rel="apple-touch-icon"
             sizes="180x180"
             href="./favicon/apple-touch-icon.png"
@@ -38,11 +42,17 @@
         <title>Pucas & Pelix</title>
         <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
         <style>
+            html {
+                box-sizing: border-box;
+            }
+            *,
+            *:before,
+            *:after {
+                box-sizing: inherit;
+            }
             body {
                 margin: 0;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                    Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji",
-                    "Segoe UI Emoji", "Segoe UI Symbol";
+                font-family: "Lato", sans-serif;
             }
             :root {
                 --dark: #181819;
@@ -205,12 +215,13 @@
                 margin-top: auto;
                 padding: 20px;
                 text-align: center;
-                font-size: 0.7em;
+                font-size: 0.8em;
                 line-height: normal;
                 color: var(--dark-3);
                 position: relative;
                 background: rgba(255, 255, 255, 0.67);
                 border-radius: 2em 2em 0 0;
+                font-weight: 700;
             }
             #ui-menu-chars {
                 position: absolute;
@@ -242,6 +253,35 @@
                     position: relative;
                     left: 20px;
                 }
+            }
+            #menu-story {
+                padding: 20px 40px;
+                max-width: 800px;
+                width: 100%;
+                text-align: center;
+                margin: 0 auto;
+                display: inline;
+                position: relative;
+            }
+            #menu-story > summary:focus {
+                outline: none;
+            }
+            details#menu-story > summary {
+                list-style: none;
+                cursor: pointer;
+                font-size: 2em;
+            }
+            #menu-story-content {
+                position: absolute;
+                bottom: 4em;
+                text-align: left;
+                left: 20px;
+                right: 20px;
+                padding: 20px 40px;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 1em;
+                font-size: 1em;
+                color: var(--dark-3);
             }
 
             #full-page-loading {
@@ -332,6 +372,23 @@
                     <div id="play-button" aria-roledescription="button">
                         <img src="/img/play.png" title="Play" />
                     </div>
+                    <details id="menu-story">
+                        <summary>Story</summary>
+                        <div id="menu-story-content">
+                            <p>
+                                In 2022, Lucas was three years old and painted
+                                his first doodles: two stick figures
+                                representing him and his brother. Inspired by
+                                this, I decided to create a video game where
+                                Lucas and his little brother Felix could control
+                                these characters with their bodies.
+                            </p>
+                            <p>
+                                Lucas created all the sounds and art for the
+                                game, with some help from me and Felix.
+                            </p>
+                        </div>
+                    </details>
 
                     <footer>
                         <span>2023 - Amsterdam</span> &bull;
